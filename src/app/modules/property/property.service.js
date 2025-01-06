@@ -236,7 +236,10 @@ const deleteProperty = async (propertyId) => {
 
     return deletedProperty;
   } catch (err) {
-    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "An error occurred while deleting the property");
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "An error occurred while deleting the property"
+    );
   }
 };
 
@@ -254,10 +257,81 @@ const markAsSold = async (propertyId) => {
 
     return markAsSold;
   } catch (err) {
-    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "An error occurred while type as sold updating the property");
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "An error occurred while type as sold updating the property"
+    );
   }
 };
 
+const blockProperty = async (id) => {
+  try {
+    const property = await Property.findById(id);
+
+    if (!property) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Property not found");
+    }
+
+    // Toggle the blocked status
+    const updatedBlockedStatus = !property.blocked;
+
+    const blockedProperty = await Property.findByIdAndUpdate(
+      id,
+      { blocked: updatedBlockedStatus },
+      { new: true }
+    );
+
+    return blockedProperty;
+  } catch (err) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Blocked property failed");
+  }
+};
+
+const approvedProperty = async (id) => {
+  try {
+    const property = await Property.findById(id);
+
+    if (!property) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Property not found");
+    }
+
+    // Toggle the approved status
+    const updatedApprovedStatus = !property.approved;
+
+    const approvedProperty = await Property.findByIdAndUpdate(
+      id,
+      { approved: updatedApprovedStatus },
+      { new: true }
+    );
+
+    return approvedProperty;
+  } catch (err) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Approved property failed");
+  }
+};
+
+const rejectProperty = async (id) => {
+  try {
+    const property = await Property.findById(id);
+
+    if (!property) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Property not found");
+    }
+
+    // Toggle the reject status
+    const updatedRejectStatus = !property.reject;
+
+    const rejectProperty = await Property.findByIdAndUpdate(
+      id,
+      { reject: updatedRejectStatus },
+      { new: true }
+    );
+
+    return rejectProperty;
+  } catch (err) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Reject property failed");
+  }
+};
 
 export const PropertyServices = {
   createProperty,
@@ -269,5 +343,8 @@ export const PropertyServices = {
   updatePropertyPromotionStatus2,
   updatePropertyClicks,
   deleteProperty,
-  markAsSold
+  markAsSold,
+  blockProperty,
+  approvedProperty,
+  rejectProperty,
 };

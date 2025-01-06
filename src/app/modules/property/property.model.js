@@ -143,6 +143,18 @@ const propertySchema = new Schema(
       type: Boolean,
       default: false,
     },
+    blocked: {
+      type: Boolean,
+      default: false,
+    },
+    approved: {
+      type: Boolean,
+      default: false,
+    },
+    reject: {
+      type: Boolean,
+      default: false,
+    },
     clicks: {
       type: Number,
       required: [true, "Property clicks is required"],

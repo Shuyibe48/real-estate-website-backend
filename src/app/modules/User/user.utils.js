@@ -1,4 +1,5 @@
 import { Agency } from "../agency/agency.model.js";
+import { Project } from "../projects/projects.model.js";
 import { Property } from "../property/property.model.js";
 import USER_ROLE from "./user.constant.js";
 import { User } from "./user.model.js";
@@ -98,6 +99,39 @@ export const generateAdminId = async () => {
   return incrementId;
 };
 
+// Developer ID
+export const findLastDeveloperId = async () => {
+  const lastDeveloper = await User.findOne(
+    {
+      role: USER_ROLE.developer,
+    },
+    {
+      id: 1,
+      _id: 0,
+    }
+  )
+    .sort({
+      createdAt: -1,
+    })
+    .lean();
+
+  return lastDeveloper?.id ? lastDeveloper.id.substring(2) : undefined;
+};
+
+export const generateDeveloperId = async () => {
+  let currentId = (0).toString();
+  const lastDeveloperId = await findLastDeveloperId();
+
+  if (lastDeveloperId) {
+    currentId = lastDeveloperId.substring(3);
+  }
+
+  let incrementId = (Number(currentId) + 1).toString().padStart(4, "0");
+
+  incrementId = `DV-${incrementId}`;
+  return incrementId;
+};
+
 // property id
 const findLastPropertyId = async () => {
   const lastProperty = await Property.findOne().sort({ createdAt: -1 }).lean();
@@ -116,6 +150,27 @@ export const generatePropertyId = async () => {
   let incrementId = (Number(currentId) + 1).toString().padStart(4, "0");
 
   incrementId = `PR-${incrementId}`;
+  return incrementId;
+};
+
+// property id
+const findLastProjectId = async () => {
+  const lastProject = await Project.findOne().sort({ createdAt: -1 }).lean();
+
+  return lastProject?.id ? lastProject.id.substring(2) : undefined;
+};
+
+export const generateProjectId = async () => {
+  let currentId = (0).toString();
+  const lastProjectId = await findLastProjectId();
+
+  if (lastProjectId) {
+    currentId = lastProjectId.substring(3);
+  }
+
+  let incrementId = (Number(currentId) + 1).toString().padStart(4, "0");
+
+  incrementId = `PJ-${incrementId}`;
   return incrementId;
 };
 

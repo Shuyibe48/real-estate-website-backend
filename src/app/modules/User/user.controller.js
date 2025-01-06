@@ -42,6 +42,19 @@ const createAdmin = catchAsync(async (req, res) => {
   });
 });
 
+const createDeveloper = catchAsync(async (req, res) => {
+  const developer = req.body;
+
+  const result = await UserServices.createDeveloperIntoDB(developer);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Developer has been created successfully",
+    data: result,
+  });
+});
+
 const changeStatus = catchAsync(async (req, res) => {
   const id = req.params.id;
 
@@ -81,6 +94,7 @@ export const UserControllers = {
   createBuyer,
   createAgent,
   createAdmin,
+  createDeveloper,
   changeStatus,
   getUsers,
   getMe,

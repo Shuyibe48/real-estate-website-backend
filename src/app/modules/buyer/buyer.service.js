@@ -124,6 +124,54 @@ const saveSearchHistory = async (id, searchText) => {
   return searchHistory;
 };
 
+const blockBuyer = async (id) => {
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    // Fetch the current buyer to check the blocked status
+    const buyer = await Buyer.findById(id).session(session);
+
+    if (!buyer) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Buyer not found");
+    }
+
+    // Toggle the blocked status
+    const updatedBlockedStatus = !buyer.blocked;
+
+    const blockedBuyer = await Buyer.findByIdAndUpdate(
+      id,
+      { blocked: updatedBlockedStatus }, // Toggle the status
+      { new: true, session }
+    );
+
+    // If toggling to true, block the user as well
+    if (updatedBlockedStatus) {
+      const userId = blockedBuyer.userId;
+
+      const blockedUser = await User.findByIdAndUpdate(
+        userId,
+        { blocked: true },
+        { new: true, session }
+      );
+
+      if (!blockedUser) {
+        throw new AppError(httpStatus.BAD_REQUEST, "Failed to block user");
+      }
+    }
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    return blockedBuyer;
+  } catch (err) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new AppError(httpStatus.BAD_REQUEST, "Transaction failed");
+  }
+};
+
 export const BuyerServices = {
   getBuyers,
   getSingleBuyers,
@@ -132,4 +180,5 @@ export const BuyerServices = {
   saveFavoriteProperty,
   deleteFavoriteProperty,
   saveSearchHistory,
+  blockBuyer,
 };

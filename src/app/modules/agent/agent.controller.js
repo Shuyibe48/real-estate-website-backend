@@ -47,9 +47,22 @@ const deleteAgent = catchAsync(async (req, res) => {
   });
 });
 
+const blockAgent = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await AgentServices.blockAgent(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Agent is blocked successfully",
+    data: result,
+  });
+});
+
 export const AgentController = {
   getAgents,
   getSingleAgent,
   updateAgent,
   deleteAgent,
+  blockAgent,
 };

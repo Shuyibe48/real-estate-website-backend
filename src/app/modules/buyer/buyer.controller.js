@@ -88,6 +88,18 @@ const saveSearchHistory = catchAsync(async (req, res) => {
   });
 });
 
+const blockBuyer = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await BuyerServices.blockBuyer(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Buyer is blocked successfully",
+    data: result,
+  });
+});
+
 export const BuyerController = {
   getBuyers,
   getSingleBuyers,
@@ -96,4 +108,5 @@ export const BuyerController = {
   saveFavoriteProperty,
   deleteFavoriteProperty,
   saveSearchHistory,
+  blockBuyer,
 };

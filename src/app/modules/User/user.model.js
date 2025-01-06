@@ -18,7 +18,7 @@ const userSchema = new Schema(
     passwordChangedAt: {
       type: Date,
     },
-    role: { type: String, enum: ["1", "2", "3", "4"] },
+    role: { type: String, enum: ["1", "2", "3", "4", "5"] },
     chats: [{ type: Schema.Types.ObjectId, ref: "Chat" }],
     appointments: [{ type: Schema.Types.ObjectId, ref: "Appointment" }],
     status: {
@@ -27,6 +27,7 @@ const userSchema = new Schema(
       default: "in-progress",
     },
     isDeleted: { type: Boolean, default: false },
+    blocked: { type: Boolean, default: false },
   },
   {
     timestamps: true,

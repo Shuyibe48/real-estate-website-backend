@@ -24,8 +24,47 @@ const adminSchema = new Schema(
       required: [true, "Email is required"],
       unique: true,
     },
+    permission: {
+      viewProperties: {
+        type: Boolean,
+        default: false,
+        required: true,
+      },
+      editProperties: {
+        type: Boolean,
+        default: false,
+        required: true,
+      },
+      deleteProperties: {
+        type: Boolean,
+        default: false,
+        required: true,
+      },
+      manageUsers: {
+        type: Boolean,
+        default: false,
+        required: true,
+      },
+      viewReports: {
+        type: Boolean,
+        default: false,
+        required: true,
+      },
+    },
+    address: {
+      type: String,
+      default: "",
+    },
+    contactNo: {
+      type: String,
+      default: "",
+    },
     profileImg: { type: String, default: "" },
     isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    blocked: {
       type: Boolean,
       default: false,
     },

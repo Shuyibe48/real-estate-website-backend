@@ -11,6 +11,8 @@ import { MessageRoutes } from "../modules/message/message.route.js";
 import { AppointmentRoutes } from "../modules/appointment/appointment.route.js";
 import { PlanRoutes } from "../modules/plan/plan.route.js";
 import { PaymentRoutes } from "../modules/payment/payment.route.js";
+import { ProjectsRoutes } from "../modules/projects/projects.route.js";
+import { DevelopersRoutes } from "../modules/developer/developer.route.js";
 
 const router = Router();
 
@@ -36,8 +38,16 @@ const moduleRoutes = [
     route: AdminRoutes,
   },
   {
+    path: "/developers",
+    route: DevelopersRoutes,
+  },
+  {
     path: "/properties",
     route: PropertyRoutes,
+  },
+  {
+    path: "/projects",
+    route: ProjectsRoutes,
   },
   {
     path: "/auth",

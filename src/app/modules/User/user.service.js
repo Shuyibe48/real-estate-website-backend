@@ -5,6 +5,7 @@ import {
   generateAdminId,
   generateAgentId,
   generateBuyerId,
+  generateDeveloperId,
 } from "./user.utils.js";
 import AppError from "../../errors/AppError.js";
 import httpStatus from "http-status";
@@ -14,6 +15,7 @@ import { verifyToken } from "../Auth/auth.utils.js";
 import config from "../../config/index.js";
 import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary.js";
 import USER_ROLE from "./user.constant.js";
+import { Developer } from "../developer/developer.model.js";
 
 const createBuyerIntoDB = async (buyer) => {
   const userData = {};
@@ -144,6 +146,45 @@ const createAdminIntoDB = async (admin) => {
   }
 };
 
+const createDeveloperIntoDB = async (developer) => {
+  const userData = {};
+
+  userData.password = developer?.password;
+  userData.role = "5";
+  userData.email = developer?.email;
+
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    userData.id = await generateDeveloperId();
+
+    const newUser = await User.create([userData], { session });
+
+    if (!newUser.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Failed to create user");
+    }
+    developer.id = newUser[0].id;
+    developer.userId = newUser[0]._id;
+
+    const newDeveloper = await Developer.create([developer], { session });
+
+    if (!newDeveloper.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Failed to create developer");
+    }
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    return newDeveloper;
+  } catch (err) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new AppError(httpStatus.BAD_REQUEST, err);
+  }
+};
+
 const changeStatus = async (id, payload) => {
   const result = await User.findByIdAndUpdate(id, payload, {
     new: true,
@@ -176,6 +217,10 @@ const getMe = async (userId, role) => {
     result = await Admin.findOne({ id: userId }).populate("userId");
   }
 
+  if (role === "5") {
+    result = await Developer.findOne({ id: userId }).populate("userId");
+  }
+
   return result;
 };
 
@@ -183,6 +228,7 @@ export const UserServices = {
   createBuyerIntoDB,
   createAgentIntoDB,
   createAdminIntoDB,
+  createDeveloperIntoDB,
   changeStatus,
   getUsers,
   getMe,

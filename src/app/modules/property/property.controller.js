@@ -107,7 +107,7 @@ const updatePropertyClicks = catchAsync(async (req, res) => {
 
 const deleteProperty = catchAsync(async (req, res) => {
   const { id } = req.params;
-  
+
   const result = await PropertyServices.deleteProperty(id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -119,12 +119,48 @@ const deleteProperty = catchAsync(async (req, res) => {
 
 const markAsSold = catchAsync(async (req, res) => {
   const { id } = req.params;
-  
+
   const result = await PropertyServices.markAsSold(id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Property type marked as sold successfully",
+    data: result,
+  });
+});
+
+const blockProperty = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await PropertyServices.blockProperty(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Blocked property successfully",
+    data: result,
+  });
+});
+
+const approvedProperty = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await PropertyServices.approvedProperty(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Approved property successfully",
+    data: result,
+  });
+});
+
+const rejectProperty = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await PropertyServices.rejectProperty(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Reject property successfully",
     data: result,
   });
 });
@@ -140,4 +176,7 @@ export const PropertyController = {
   updatePropertyClicks,
   deleteProperty,
   markAsSold,
+  blockProperty,
+  approvedProperty,
+  rejectProperty,
 };

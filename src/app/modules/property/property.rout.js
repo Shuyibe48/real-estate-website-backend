@@ -25,5 +25,8 @@ propertyRouter.patch(
 );
 propertyRouter.patch("/markAsSold/:id", PropertyController.markAsSold);
 propertyRouter.delete("/:id", PropertyController.deleteProperty);
+propertyRouter.delete("/block/:id", PropertyController.blockProperty);
+propertyRouter.delete("/approved/:id", PropertyController.approvedProperty);
+propertyRouter.delete("/reject/:id", PropertyController.rejectProperty);
 
 export const PropertyRoutes = propertyRouter;

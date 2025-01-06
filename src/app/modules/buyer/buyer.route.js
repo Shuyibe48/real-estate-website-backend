@@ -10,5 +10,6 @@ buyerRouter.delete("/:id", BuyerController.deleteBuyer);
 buyerRouter.post("/save-favorite-property/:id", BuyerController.saveFavoriteProperty);
 buyerRouter.post("/delete-favorite-property/:id", BuyerController.deleteFavoriteProperty);
 buyerRouter.delete("/save-search-history/:id", BuyerController.saveSearchHistory);
+buyerRouter.delete("/block/:id", BuyerController.blockBuyer);
 
 export const BuyerRoutes = buyerRouter;

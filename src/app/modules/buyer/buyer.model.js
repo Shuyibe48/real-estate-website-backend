@@ -44,6 +44,10 @@ const buyerSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    blocked: {
+      type: Boolean,
+      default: false,
+    },
     favorites: [{ type: Schema.Types.ObjectId, ref: "Property", default: "" }],
     searchHistory: [{ type: String, default: "" }],
   },

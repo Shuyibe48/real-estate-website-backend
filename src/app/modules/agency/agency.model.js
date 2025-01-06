@@ -56,6 +56,14 @@ const agencySchema = new Schema(
       type: Boolean,
       default: false,
     },
+    blocked: {
+      type: Boolean,
+      default: false,
+    },
+    approved: {
+      type: Boolean,
+      default: false,
+    },
     status: {
       type: String,
       enum: ["in-progress", "blocked"],
