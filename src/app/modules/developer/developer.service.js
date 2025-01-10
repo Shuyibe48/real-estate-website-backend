@@ -25,7 +25,7 @@ const getDevelopers = async (query) => {
 };
 
 const getSingleDeveloper = async (id) => {
-  const result = await Developer.findById(id)
+  const result = await Developer.findById(id).populate("projects")
   return result;
 };
 

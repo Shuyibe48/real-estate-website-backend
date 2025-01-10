@@ -10,49 +10,37 @@ const projectSchema = new Schema(
     developerId: {
       type: Schema.Types.ObjectId,
       required: [true, "Project developer id is required"],
-      ref: "Agency",
+      ref: "Developer",
     },
-    projectName: {
-        type: String,
-        required: true,
-        trim: true
+    title: {
+      type: String,
+      required: true,
+      trim: true,
     },
-    projectType: {
-        type: String,
-        enum: ['Residential', 'Commercial', 'Mixed-Use'],
-        required: true
+    landSize: {
+      type: Number,
+      required: [true, "Property land size is required"],
     },
-    startDate: {
-        type: Date,
-        required: true
+    bedrooms: {
+      type: Number,
+      required: [true, "Property bedrooms is required"],
     },
-    endDate: {
-        type: Date
+    bathrooms: {
+      type: Number,
+      required: [true, "Property bathrooms is required"],
     },
-    status: {
-        type: String,
-        enum: ['Ongoing', 'Completed', 'Upcoming'],
-        default: 'Upcoming'
+    carSpaces: {
+      type: Number,
+      required: [true, "Property car spaces is required"],
     },
-    developer: {
-        type: Schema.Types.ObjectId,
-        ref: 'Developer',
-        required: true
-    },
-    location: {
-        street: String,
-        city: String,
-        state: String,
-        zipCode: String,
-        country: String
-    },
-    budget: {
-        type: Number,
-        required: true
-    },
+    price: { type: Number, required: [true, 'Project price is required'] },
     description: {
-        type: String
+      type: String,
     },
+    // floorPlan: {
+    //   type: String,
+    //   required: [true, "Project floor plan is required"],
+    // },
     images: [
       {
         type: String,
@@ -60,15 +48,6 @@ const projectSchema = new Schema(
         default: "",
       },
     ],
-    // video: {
-    //   type: String,
-    //   require: [true, "Project video is required"],
-    //   default: "",
-    // },
-    // virtualTour: {
-    //   type: String,
-    //   required: [true, "Project virtualTour is required"],
-    // },
     isPromoted: {
       type: Boolean,
       required: [true, "Project isPromoted is required"],

@@ -186,6 +186,8 @@ const createPayment = async (plan, agency) => {
       paymentStatus: "pending",
     };
 
+    console.log(paymentData);
+
     // Create a new payment within the transaction
     const newPayment = await Payment.create([paymentData], { session });
 

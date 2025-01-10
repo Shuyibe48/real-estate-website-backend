@@ -5,10 +5,9 @@ import { ProjectServices } from "./projects.service.js";
 
 const createProject = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const { developerId } = req.body;
   const { project } = req.body;
 
-  const result = await ProjectServices.createProject(id, developerId, project);
+  const result = await ProjectServices.createProject(id, project);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

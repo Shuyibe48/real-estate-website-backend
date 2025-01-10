@@ -13,6 +13,8 @@ import { PlanRoutes } from "../modules/plan/plan.route.js";
 import { PaymentRoutes } from "../modules/payment/payment.route.js";
 import { ProjectsRoutes } from "../modules/projects/projects.route.js";
 import { DevelopersRoutes } from "../modules/developer/developer.route.js";
+import { ComplainsRoutes } from "../modules/complain/complains.rout.js";
+import { PlatformsRoutes } from "../modules/platform/platform.route.js";
 
 const router = Router();
 
@@ -56,6 +58,14 @@ const moduleRoutes = [
   {
     path: "/reviews",
     route: ReviewsRoutes,
+  },
+  {
+    path: "/platforms",
+    route: PlatformsRoutes,
+  },
+  {
+    path: "/complains",
+    route: ComplainsRoutes,
   },
   {
     path: "/messages",

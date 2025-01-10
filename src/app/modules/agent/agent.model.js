@@ -61,12 +61,7 @@ const agentSchema = new Schema(
     },
     properties: [{ type: Schema.Types.ObjectId, ref: "Property", default: "" }],
     clients: [{ type: Schema.Types.ObjectId, ref: "Buyer" }],
-    reviews: [
-      {
-        review: { type: Schema.Types.ObjectId, ref: "Reviews", required: true },
-        user: { type: Schema.Types.ObjectId, ref: "Buyer", required: true },
-      },
-    ],
+    reviews: [{ type: Schema.Types.ObjectId, ref: "Reviews", default: "" }],
   },
   {
     toJSON: {

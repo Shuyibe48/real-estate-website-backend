@@ -103,6 +103,7 @@ const getProperties = async (query) => {
 
 const getSingleProperty = async (id) => {
   const result = await Property.findById(id)
+    .populate("reviews")
     .populate("agencyId")
     .populate("uploaderAgentId");
   return result;

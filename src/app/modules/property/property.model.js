@@ -160,6 +160,7 @@ const propertySchema = new Schema(
       required: [true, "Property clicks is required"],
       default: 0,
     },
+    reviews: [{ type: Schema.Types.ObjectId, ref: "Reviews", default: "" }],
   },
   {
     timestamps: true,

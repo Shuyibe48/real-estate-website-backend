@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import app from "./app.js";
 import seedSuperAdmin from "./app/DB/index.js";
+import seedPlatform from "./app/DB/platform.js";
 
 const PORT = 5000;
 
@@ -12,6 +13,7 @@ async function bootstrap() {
   );
 
   seedSuperAdmin()
+  seedPlatform()
 
   server = app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`);

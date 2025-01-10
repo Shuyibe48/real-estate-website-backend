@@ -7,7 +7,7 @@ import httpStatus from "http-status";
 import AppError from "../../errors/AppError.js";
 import { Developer } from "../developer/developer.model.js";
 
-const createProperty = async (id, developerId, project) => {
+const createProject = async (id, project) => {
   const projectData = { ...project };
 
   const session = await mongoose.startSession();
@@ -25,7 +25,7 @@ const createProperty = async (id, developerId, project) => {
     }
 
     await Developer.findByIdAndUpdate(
-      developerId,
+      id,
       {
         $addToSet: { projects: [newProject[0]._id] },
       },
@@ -248,7 +248,7 @@ const markAsSold = async (projectId) => {
 
 
 export const ProjectServices = {
-  createProperty,
+  createProject,
   getProjects,
   getSingleProject,
   getPromotedProject,

@@ -28,6 +28,7 @@ const getAgents = async (query) => {
 
 const getSingleAgent = async (id) => {
   const result = await Agent.findById(id)
+    .populate("reviews")
     .populate("myAgency.agency")
     .populate("properties");
   return result;
@@ -133,7 +134,6 @@ const deleteAgent = async (id) => {
 //   }
 // };
 
-
 const blockAgent = async (id) => {
   const session = await mongoose.startSession();
 
@@ -182,11 +182,10 @@ const blockAgent = async (id) => {
   }
 };
 
-
 export const AgentServices = {
   getAgents,
   getSingleAgent,
   updateAgent,
   deleteAgent,
-  blockAgent
+  blockAgent,
 };
