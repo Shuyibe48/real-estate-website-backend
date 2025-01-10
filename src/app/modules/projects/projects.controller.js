@@ -104,7 +104,7 @@ const updateProjectClicks = catchAsync(async (req, res) => {
 
 const deleteProject = catchAsync(async (req, res) => {
   const { id } = req.params;
-  
+
   const result = await ProjectServices.deleteProject(id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -116,12 +116,49 @@ const deleteProject = catchAsync(async (req, res) => {
 
 const markAsSold = catchAsync(async (req, res) => {
   const { id } = req.params;
-  
+
   const result = await ProjectServices.markAsSold(id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Project type marked as sold successfully",
+    data: result,
+  });
+});
+
+
+const blockProject = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await ProjectServices.blockProject(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Blocked project successfully",
+    data: result,
+  });
+});
+
+const approvedProject = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await ProjectServices.approvedProject(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Approved project successfully",
+    data: result,
+  });
+});
+
+const rejectProject = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await ProjectServices.rejectProject(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Reject project successfully",
     data: result,
   });
 });
@@ -137,4 +174,7 @@ export const ProjectController = {
   updateProjectClicks,
   deleteProject,
   markAsSold,
+  blockProject,
+  approvedProject,
+  rejectProject,
 };

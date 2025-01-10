@@ -25,5 +25,9 @@ projectRouter.patch(
 );
 projectRouter.patch("/markAsSold/:id", ProjectController.markAsSold);
 projectRouter.delete("/:id", ProjectController.deleteProject);
+projectRouter.delete("/block/:id", ProjectController.blockProject);
+projectRouter.delete("/approved/:id", ProjectController.approvedProject);
+projectRouter.delete("/reject/:id", ProjectController.rejectProject);
+
 
 export const ProjectsRoutes = projectRouter;

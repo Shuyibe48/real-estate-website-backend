@@ -63,6 +63,10 @@ const projectSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    reject: {
+      type: Boolean,
+      default: false,
+    },
     blocked: {
       type: Boolean,
       default: false,

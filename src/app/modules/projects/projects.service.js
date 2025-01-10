@@ -44,10 +44,10 @@ const createProject = async (id, project) => {
 
 // const getProjects = async (query) => {
 //   console.log(query);
-//   const projectQuery = new QueryBuilder(Property.find(), query)
-//     .search(propertySearchableFields)
+//   const projectQuery = new QueryBuilder(Project.find(), query)
+//     .search(projectSearchableFields)
 //     .filter()
-//     .exactMatch(["city", "type", "propertyType", "price"])
+//     .exactMatch(["city", "type", "projectType", "price"])
 //     .sort()
 //     .paginate()
 //     .fields();
@@ -60,9 +60,9 @@ const createProject = async (id, project) => {
 // const getProjects = async (query) => {
 //   console.log("Incoming Query:", query);
 
-//   const projectQuery = new QueryBuilder(Property.find(), query)
-//     .search(propertySearchableFields)
-//     .filter() // propertyType ফিল্টারিং এখানে হচ্ছে
+//   const projectQuery = new QueryBuilder(Project.find(), query)
+//     .search(projectSearchableFields)
+//     .filter() // projectType ফিল্টারিং এখানে হচ্ছে
 //     .exactMatch(["city", "type"]) // শুধুমাত্র অন্য ফিল্ডগুলোর জন্য exactMatch
 //     .sort()
 //     .paginate()
@@ -91,8 +91,7 @@ const getProjects = async (query) => {
 };
 
 const getSingleProject = async (id) => {
-  const result = await Project.findById(id)
-    .populate("developerId")
+  const result = await Project.findById(id).populate("developerId");
   return result;
 };
 
@@ -174,7 +173,7 @@ const updateProjectClicks = async (id) => {
 //   try {
 //     session.startTransaction();
 
-//     const deletedProject = await Property.findByIdAndUpdate(
+//     const deletedProject = await Project.findByIdAndUpdate(
 //       projectId,
 //       { isDeleted: true },
 //       { new: true, session }
@@ -184,7 +183,7 @@ const updateProjectClicks = async (id) => {
 //       throw new AppError(httpStatus.BAD_REQUEST, "Failed to delete project");
 //     }
 
-//     const deletedPropertyFromUser = await User.findByIdAndUpdate(
+//     const deletedProjectFromUser = await User.findByIdAndUpdate(
 //       id,
 //       {
 //         $pull: { properties: deletedProject._id },
@@ -192,7 +191,7 @@ const updateProjectClicks = async (id) => {
 //       { new: true, session }
 //     );
 
-//     if (!deletedPropertyFromUser) {
+//     if (!deletedProjectFromUser) {
 //       throw new AppError(
 //         httpStatus.BAD_REQUEST,
 //         "Failed to delete project from user"
@@ -224,7 +223,10 @@ const deleteProject = async (projectId) => {
 
     return deletedProject;
   } catch (err) {
-    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "An error occurred while deleting the project");
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "An error occurred while deleting the project"
+    );
   }
 };
 
@@ -242,10 +244,81 @@ const markAsSold = async (projectId) => {
 
     return markAsSold;
   } catch (err) {
-    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "An error occurred while type as sold updating the project");
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "An error occurred while type as sold updating the project"
+    );
   }
 };
 
+const blockProject = async (id) => {
+  try {
+    const project = await Project.findById(id);
+
+    if (!project) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Project not found");
+    }
+
+    // Toggle the blocked status
+    const updatedBlockedStatus = !project.blocked;
+
+    const blockedProject = await Project.findByIdAndUpdate(
+      id,
+      { blocked: updatedBlockedStatus },
+      { new: true }
+    );
+
+    return blockedProject;
+  } catch (err) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Blocked project failed");
+  }
+};
+
+const approvedProject = async (id) => {
+  try {
+    const project = await Project.findById(id);
+
+    if (!project) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Project not found");
+    }
+
+    // Toggle the approved status
+    const updatedApprovedStatus = !project.approved;
+
+    const approvedProject = await Project.findByIdAndUpdate(
+      id,
+      { approved: updatedApprovedStatus },
+      { new: true }
+    );
+
+    return approvedProject;
+  } catch (err) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Approved project failed");
+  }
+};
+
+const rejectProject = async (id) => {
+  try {
+    const project = await Project.findById(id);
+
+    if (!project) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Project not found");
+    }
+
+    // Toggle the reject status
+    const updatedRejectStatus = !project.reject;
+
+    const rejectProject = await Project.findByIdAndUpdate(
+      id,
+      { reject: updatedRejectStatus },
+      { new: true }
+    );
+
+    return rejectProject;
+  } catch (err) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Reject project failed");
+  }
+};
 
 export const ProjectServices = {
   createProject,
@@ -257,5 +330,8 @@ export const ProjectServices = {
   updateProjectPromotionStatus2,
   updateProjectClicks,
   deleteProject,
-  markAsSold
+  markAsSold,
+  blockProject,
+  approvedProject,
+  rejectProject,
 };
