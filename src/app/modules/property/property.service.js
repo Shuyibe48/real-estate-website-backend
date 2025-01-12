@@ -181,6 +181,24 @@ const updatePropertyClicks = async (id) => {
   }
 };
 
+const updatePropertyViews = async (id) => {
+  try {
+    const result = await Property.findByIdAndUpdate(
+      id,
+      { $inc: { views: 1 } },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    return result;
+  } catch (error) {
+    throw new Error(
+      `Error updating property promotion status: ${error.message}`
+    );
+  }
+};
+
 // const deleteProperty = async (id, propertyId) => {
 //   const session = await mongoose.startSession();
 
@@ -343,6 +361,7 @@ export const PropertyServices = {
   updatePropertyPromotionStatus,
   updatePropertyPromotionStatus2,
   updatePropertyClicks,
+  updatePropertyViews,
   deleteProperty,
   markAsSold,
   blockProperty,

@@ -10,7 +10,7 @@ import {
 import AppError from "../../errors/AppError.js";
 import httpStatus from "http-status";
 import { Agent } from "../agent/agent.model.js";
-import { Admin } from "../admin/admin.model.js";
+import { Admin, SuperAdmin } from "../admin/admin.model.js";
 import { verifyToken } from "../Auth/auth.utils.js";
 import config from "../../config/index.js";
 import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary.js";
@@ -215,6 +215,10 @@ const getMe = async (userId, role) => {
 
   if (role === "3") {
     result = await Admin.findOne({ id: userId }).populate("userId");
+  }
+
+  if (role === "4") {
+    result = await SuperAdmin.findOne({ id: userId }).populate("userId");
   }
 
   if (role === "5") {

@@ -160,6 +160,11 @@ const propertySchema = new Schema(
       required: [true, "Property clicks is required"],
       default: 0,
     },
+    views: {
+      type: Number,
+      required: [true, "Property views is required"],
+      default: 0,
+    },
     reviews: [{ type: Schema.Types.ObjectId, ref: "Reviews", default: "" }],
   },
   {

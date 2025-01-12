@@ -105,6 +105,18 @@ const updatePropertyClicks = catchAsync(async (req, res) => {
   });
 });
 
+const updatePropertyViews = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const result = await PropertyServices.updatePropertyViews(id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Property view is updated successfully",
+    data: result,
+  });
+});
+
 const deleteProperty = catchAsync(async (req, res) => {
   const { id } = req.params;
 
@@ -174,6 +186,7 @@ export const PropertyController = {
   updatePropertyPromotionStatus,
   updatePropertyPromotionStatus2,
   updatePropertyClicks,
+  updatePropertyViews,
   deleteProperty,
   markAsSold,
   blockProperty,

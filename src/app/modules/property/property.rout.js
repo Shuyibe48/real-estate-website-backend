@@ -19,10 +19,17 @@ propertyRouter.patch(
   "/update-property-promotion-status2/:agencyId",
   PropertyController.updatePropertyPromotionStatus2
 );
+
 propertyRouter.patch(
   "/update-property-clicks/:id",
   PropertyController.updatePropertyClicks
 );
+
+propertyRouter.patch(
+  "/update-property-views/:id",
+  PropertyController.updatePropertyViews
+);
+
 propertyRouter.patch("/markAsSold/:id", PropertyController.markAsSold);
 propertyRouter.delete("/:id", PropertyController.deleteProperty);
 propertyRouter.delete("/block/:id", PropertyController.blockProperty);

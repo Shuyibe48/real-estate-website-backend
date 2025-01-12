@@ -15,6 +15,10 @@ const platformsSchema = new Schema(
       type: String,
       required: [true, "Banner is required"],
     },
+    developerBanner: {
+      type: String,
+      required: [true, "Banner is required"],
+    },
   },
   {
     timestamps: true,

@@ -104,3 +104,58 @@ adminSchema.statics.isUserExists = async function (id) {
 };
 
 export const Admin = model("Admin", adminSchema);
+
+
+const superAdminSchema = new Schema(
+  {
+    id: { type: String, unique: true, required: [true, "Id is required"] },
+    userId: {
+      type: Schema.Types.ObjectId,
+      required: [true, "User id is required"],
+      unique: true,
+      ref: "User",
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    blocked: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  {
+    toJSON: {
+      virtuals: true,
+    },
+  }
+);
+
+// generating full name
+superAdminSchema.virtual("fullName").get(function () {
+  return this?.name?.firstName + " " + this?.name?.lastName;
+});
+
+// filter out deleted documents
+superAdminSchema.pre("find", function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+superAdminSchema.pre("findOne", function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+superAdminSchema.pre("aggregate", function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
+
+//checking if user is already exist!
+superAdminSchema.statics.isUserExists = async function (id) {
+  const existingUser = await Admin.findOne({ id });
+  return existingUser;
+};
+
+export const SuperAdmin = model("SuperAdmin", superAdminSchema);
