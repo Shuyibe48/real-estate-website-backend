@@ -55,52 +55,120 @@ const createAgency = async (agency, agentId) => {
   }
 };
 
+// const getAgencies = async (query) => {
+//   const agencyQuery = new QueryBuilder(
+//     Agency.find()
+//       .populate("properties")
+//       .populate("member.agent")
+//       .populate("owner"),
+//     query
+//   )
+//     .search(agencySearchableFields)
+//     .filter()
+//     .exactMatch(["address"])
+//     .sort()
+//     .paginate()
+//     .fields();
+
+//   const result = await agencyQuery.modelQuery;
+
+//   return result;
+// };
 const getAgencies = async (query) => {
-  const agencyQuery = new QueryBuilder(
-    Agency.find()
+  try {
+    // Build the query using the QueryBuilder
+    const agencyQuery = new QueryBuilder(
+      Agency.find()
+        .populate("properties")
+        .populate("member.agent")
+        .populate("owner"),
+      query
+    )
+      .search(agencySearchableFields)
+      .filter()
+      .exactMatch(["address"])
+      .sort()
+      .paginate()
+      .fields();
+
+    // Execute the query
+    const result = await agencyQuery.modelQuery;
+
+    // If no result found, log it and return an empty array or custom message
+    if (!result || result.length === 0) {
+      console.log("No agencies found with the given query.");
+      return []; // Or a custom message like 'No agencies found.'
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Error fetching agencies:", error);
+    throw new Error("Could not retrieve agency data.");
+  }
+};
+
+
+// const getSingleAgency = async (id) => {
+//   const result = await Agency.findById(id).populate("promotedPlan.planId")
+//     .populate("payments")
+//     .populate("properties")
+//     .populate("member.agent")
+//     .populate("owner");
+//   return result;
+// };
+const getSingleAgency = async (id) => {
+  try {
+    // Find the agency by ID and populate necessary fields
+    const result = await Agency.findById(id)
+      .populate("promotedPlan.planId")
+      .populate("payments")
       .populate("properties")
       .populate("member.agent")
-      .populate("owner"),
-    query
-  )
-    .search(agencySearchableFields)
-    .filter()
-    .exactMatch(["address"])
-    .sort()
-    .paginate()
-    .fields();
+      .populate("owner");
 
-  const result = await agencyQuery.modelQuery;
+    // Check if the agency was found
+    if (!result) {
+      console.log(`No agency found with ID: ${id}`);
+      throw new Error(`Agency with ID: ${id} not found.`);
+    }
 
-  return result;
+    return result;
+  } catch (error) {
+    console.error(`Error fetching agency with ID: ${id}:`, error);
+    throw new Error(`Could not retrieve agency with ID: ${id}.`);
+  }
 };
 
-const getSingleAgency = async (id) => {
-  const result = await Agency.findById(id).populate("promotedPlan.planId")
-    .populate("payments")
-    .populate("properties")
-    .populate("member.agent")
-    .populate("owner");
-  return result;
-};
 
+// const updateAgency = async (id, payload) => {
+//   const result = await Agency.findByIdAndUpdate(id, payload, {
+//     new: true,
+//     // runValidators: true,
+//   });
+//   return result;
+// };
 const updateAgency = async (id, payload) => {
-  // const { name, ...remainingAgencyData } = payload;
+  try {
+    // Find and update the agency
+    const result = await Agency.findByIdAndUpdate(id, payload, {
+      new: true,
+      runValidators: true,
+    });
 
-  // const modifiedUpdatedData = { ...remainingAgencyData };
+    // Check if the agency was found and updated
+    if (!result) {
+      console.log(`Agency with ID: ${id} not found.`);
+      throw new Error(`Agency with ID: ${id} not found.`);
+    }
 
-  // if (name && Object.keys(name).length) {
-  //   for (const [key, value] of Object.entries(name)) {
-  //     modifiedUpdatedData[`name.${key}`] = value;
-  //   }
-  // }
-
-  const result = await Agency.findByIdAndUpdate(id, payload, {
-    new: true,
-    runValidators: true,
-  });
-  return result;
+    console.log(`Agency with ID: ${id} successfully updated.`);
+    return result;
+  } catch (error) {
+    console.error(`Error updating agency with ID: ${id}:`, error);
+    throw new Error(`Failed to update agency with ID: ${id}.`);
+  }
 };
+
 
 const addMember = async (id, agent) => {
   const session = await mongoose.startSession();

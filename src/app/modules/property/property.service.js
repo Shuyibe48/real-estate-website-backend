@@ -84,30 +84,75 @@ const createProperty = async (id, agentId, property) => {
 //   return result;
 // };
 
+// const getProperties = async (query) => {
+//   const propertyQuery = new QueryBuilder(
+//     Property.find().populate("agencyId").populate("uploaderAgentId"),
+//     query
+//   )
+//     .search(propertySearchableFields) // Partial match for searchable fields
+//     .filter()
+//     .exactMatch(["city", "type"]) // `type` এর জন্য exact match এবং `city` এর জন্য partial match
+//     .sort()
+//     .paginate()
+//     .fields();
+
+//   const result = await propertyQuery.modelQuery;
+
+//   return result;
+// };
 const getProperties = async (query) => {
-  const propertyQuery = new QueryBuilder(
-    Property.find().populate("agencyId").populate("uploaderAgentId"),
-    query
-  )
-    .search(propertySearchableFields) // Partial match for searchable fields
-    .filter()
-    .exactMatch(["city", "type"]) // `type` এর জন্য exact match এবং `city` এর জন্য partial match
-    .sort()
-    .paginate()
-    .fields();
+  try {
+    const propertyQuery = new QueryBuilder(
+      Property.find().populate("agencyId", "name address") // শুধু প্রয়োজনীয় ফিল্ডগুলো populate
+        .populate("uploaderAgentId", "name email"), // শুধু প্রয়োজনীয় ফিল্ড
+      query
+    )
+      .search(propertySearchableFields) // Partial match for searchable fields
+      .filter()
+      .exactMatch(["city", "type"]) // `type` এর জন্য exact match এবং `city` এর জন্য partial match
+      .sort() // if not specified, default sorting can be applied like createdAt
+      .paginate()
+      .fields();
 
-  const result = await propertyQuery.modelQuery;
+    const result = await propertyQuery.modelQuery;
 
-  return result;
+    if (!result.length) {
+      throw new AppError(httpStatus.NOT_FOUND, "No properties found.");
+    }
+
+    return result;
+  } catch (error) {
+    // Handle any unexpected errors
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error retrieving properties.");
+  }
 };
 
+
+// const getSingleProperty = async (id) => {
+//   const result = await Property.findById(id)
+//     .populate("reviews")
+//     .populate("agencyId")
+//     .populate("uploaderAgentId");
+//   return result;
+// };
 const getSingleProperty = async (id) => {
-  const result = await Property.findById(id)
-    .populate("reviews")
-    .populate("agencyId")
-    .populate("uploaderAgentId");
-  return result;
+  try {
+    const result = await Property.findById(id)
+      .populate("reviews", "rating comment user") // শুধু প্রয়োজনীয় ফিল্ড populate
+      .populate("agencyId", "name address") // শুধু প্রয়োজনীয় ফিল্ড populate
+      .populate("uploaderAgentId", "name email");
+
+    if (!result) {
+      throw new AppError(httpStatus.NOT_FOUND, "Property not found.");
+    }
+
+    return result;
+  } catch (error) {
+    // Handle any unexpected errors
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error retrieving property.");
+  }
 };
+
 
 const getPromotedProperty = async () => {
   try {
@@ -119,13 +164,35 @@ const getPromotedProperty = async () => {
   }
 };
 
+// const updateProperty = async (id, payload) => {
+//   const result = await Property.findByIdAndUpdate(id, payload, {
+//     new: true,
+//     runValidators: true,
+//   });
+//   return result;
+// };
 const updateProperty = async (id, payload) => {
-  const result = await Property.findByIdAndUpdate(id, payload, {
-    new: true,
-    runValidators: true,
-  });
-  return result;
+  try {
+    // Property ডাটা খুঁজে বের করা
+    const existingProperty = await Property.findById(id);
+
+    if (!existingProperty) {
+      throw new AppError(httpStatus.NOT_FOUND, "Property not found.");
+    }
+
+    // প্রপার্টি আপডেট করা
+    const updatedProperty = await Property.findByIdAndUpdate(id, payload, {
+      new: true,
+      runValidators: true,
+    });
+
+    return updatedProperty;
+  } catch (error) {
+    // Unexpected errors handle করা
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error updating property.");
+  }
 };
+
 
 const updatePropertyPromotionStatus = async (id, isPromotedStatus) => {
   try {

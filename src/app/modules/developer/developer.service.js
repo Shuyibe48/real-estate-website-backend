@@ -6,47 +6,121 @@ import httpStatus from "http-status";
 import { developerSearchableFields } from "./developer.constant.js";
 import QueryBuilder from "../../builder/QueryBuilder.js";
 
+// const getDevelopers = async (query) => {
+//   const developerQuery = new QueryBuilder(
+//     Developer.find()
+//       .populate("userId"),
+//     query
+//   )
+//     .search(developerSearchableFields)
+//     .filter()
+//     .exactMatch(["address"])
+//     .sort()
+//     .paginate()
+//     .fields();
+
+//   const result = await developerQuery.modelQuery;
+
+//   return result;
+// };
 const getDevelopers = async (query) => {
-  const developerQuery = new QueryBuilder(
-    Developer.find()
-      .populate("userId"),
-    query
-  )
-    .search(developerSearchableFields)
-    .filter()
-    .exactMatch(["address"])
-    .sort()
-    .paginate()
-    .fields();
+  try {
+    // QueryBuilder-কে শুরু করা
+    const developerQuery = new QueryBuilder(
+      Developer.find().populate("userId"), // populate করা `userId` সহ
+      query
+    )
+      .search(developerSearchableFields) // সার্চযোগ্য ফিল্ডের জন্য
+      .filter() // ফিল্টারিং
+      .exactMatch(["address"]) // exact match জন্য
+      .sort() // সাজানোর জন্য
+      .paginate() // পেজিনেশন
+      .fields(); // প্রয়োজনীয় ফিল্ডস
 
-  const result = await developerQuery.modelQuery;
+    // মডেল কুয়েরি চালানো
+    const result = await developerQuery.modelQuery;
 
-  return result;
-};
-
-const getSingleDeveloper = async (id) => {
-  const result = await Developer.findById(id).populate("projects")
-  return result;
-};
-
-const updateDeveloper = async (id, payload) => {
-  const { name, ...remainingDeveloperData } = payload;
-
-  const modifiedUpdatedData = { ...remainingDeveloperData };
-
-  if (name && Object.keys(name).length) {
-    for (const [key, value] of Object.entries(name)) {
-      modifiedUpdatedData[`name.${key}`] = value;
-    }
+    return result;
+  } catch (error) {
+    // ত্রুটি হ্যান্ডলিং
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error fetching developers.");
   }
-
-  const result = await Developer.findByIdAndUpdate(id, modifiedUpdatedData, {
-    new: true,
-    runValidators: true,
-  })
-    .populate("userId")
-  return result;
 };
+
+
+// const getSingleDeveloper = async (id) => {
+//   const result = await Developer.findById(id).populate("projects")
+//   return result;
+// };
+const getSingleDeveloper = async (id) => {
+  try {
+    // ডেভেলপার তথ্য পাওয়া
+    const result = await Developer.findById(id).populate("projects");
+
+    if (!result) {
+      // যদি ডেভেলপার না পাওয়া যায়
+      throw new AppError(httpStatus.NOT_FOUND, "Developer not found!");
+    }
+
+    return result;
+  } catch (error) {
+    // ত্রুটি হ্যান্ডলিং
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error fetching developer.");
+  }
+};
+
+
+
+// const updateDeveloper = async (id, payload) => {
+//   const { name, ...remainingDeveloperData } = payload;
+
+//   const modifiedUpdatedData = { ...remainingDeveloperData };
+
+//   if (name && Object.keys(name).length) {
+//     for (const [key, value] of Object.entries(name)) {
+//       modifiedUpdatedData[`name.${key}`] = value;
+//     }
+//   }
+
+//   const result = await Developer.findByIdAndUpdate(id, modifiedUpdatedData, {
+//     new: true,
+//     runValidators: true,
+//   })
+//     .populate("userId")
+//   return result;
+// };
+const updateDeveloper = async (id, payload) => {
+  try {
+    const { name, ...remainingDeveloperData } = payload;
+
+    const modifiedUpdatedData = { ...remainingDeveloperData };
+
+    // যদি name ফিল্ড থাকে, তবে তাকে সংশোধন করা
+    if (name && Object.keys(name).length) {
+      for (const [key, value] of Object.entries(name)) {
+        modifiedUpdatedData[`name.${key}`] = value;
+      }
+    }
+
+    // ডেভেলপার আপডেট করা
+    const result = await Developer.findByIdAndUpdate(id, modifiedUpdatedData, {
+      new: true,
+      runValidators: true,
+    }).populate("userId");
+
+    if (!result) {
+      // যদি ডেভেলপার না পাওয়া যায়
+      throw new AppError(httpStatus.NOT_FOUND, "Developer not found!");
+    }
+
+    return result;
+  } catch (error) {
+    // ত্রুটি হ্যান্ডলিং
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error updating developer.");
+  }
+};
+
+
 
 const deleteDeveloper = async (id) => {
   const session = await mongoose.startSession();

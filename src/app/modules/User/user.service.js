@@ -185,48 +185,136 @@ const createDeveloperIntoDB = async (developer) => {
   }
 };
 
+// const changeStatus = async (id, payload) => {
+//   const result = await User.findByIdAndUpdate(id, payload, {
+//     new: true,
+//   });
+//   return result;
+// };
+
+// const getUsers = async (id) => {
+//   const result = await User.find({ _id: id }).populate("appointments");
+//   return result;
+// };
+// Improved changeStatus function with error handling and validation
 const changeStatus = async (id, payload) => {
-  const result = await User.findByIdAndUpdate(id, payload, {
-    new: true,
-  });
-  return result;
+  try {
+    if (!id || typeof id !== 'string') {
+      throw new Error('Invalid ID');
+    }
+    const result = await User.findByIdAndUpdate(id, payload, { new: true });
+    if (!result) {
+      throw new Error('User not found');
+    }
+    return result;
+  } catch (error) {
+    console.error('Error in changeStatus:', error);
+    throw new Error('Error updating status');
+  }
 };
 
+// Improved getUsers function with error handling and performance optimization
 const getUsers = async (id) => {
-  const result = await User.find({ _id: id }).populate("appointments");
-  return result;
+  try {
+    if (!id || typeof id !== 'string') {
+      throw new Error('Invalid ID');
+    }
+    const result = await User.find({ _id: id })
+      .select('name email appointments') // select only the necessary fields
+      .populate("appointments");
+    if (!result.length) {
+      throw new Error('No users found');
+    }
+    return result;
+  } catch (error) {
+    console.error('Error in getUsers:', error);
+    throw new Error('Error fetching users');
+  }
 };
 
+
+// const getMe = async (userId, role) => {
+//   let result = null;
+
+//   if (role === "1") {
+//     result = await Buyer.findOne({ id: userId })
+//       .populate("userId")
+//       .populate("favorites");
+//   }
+
+//   if (role === "2") {
+//     result = await Agent.findOne({ id: userId })
+//       .populate("properties")
+//       .populate("userId")
+//       .populate("myAgency.agency");
+//   }
+
+//   if (role === "3") {
+//     result = await Admin.findOne({ id: userId }).populate("userId");
+//   }
+
+//   if (role === "4") {
+//     result = await SuperAdmin.findOne({ id: userId }).populate("userId");
+//   }
+
+//   if (role === "5") {
+//     result = await Developer.findOne({ id: userId }).populate("userId");
+//   }
+
+//   return result;
+// };
 const getMe = async (userId, role) => {
-  let result = null;
+  try {
+    if (!userId || !role) {
+      throw new Error('Invalid userId or role');
+    }
 
-  if (role === "1") {
-    result = await Buyer.findOne({ id: userId })
-      .populate("userId")
-      .populate("favorites");
+    let result = null;
+
+    switch (role) {
+      case "1":
+        result = await Buyer.findOne({ id: userId })
+          .populate("userId")
+          .populate("favorites");
+        break;
+
+      case "2":
+        result = await Agent.findOne({ id: userId })
+          .populate("properties")
+          .populate("userId")
+          .populate("myAgency.agency");
+        break;
+
+      case "3":
+        result = await Admin.findOne({ id: userId })
+          .populate("userId");
+        break;
+
+      case "4":
+        result = await SuperAdmin.findOne({ id: userId })
+          .populate("userId");
+        break;
+
+      case "5":
+        result = await Developer.findOne({ id: userId })
+          .populate("userId");
+        break;
+
+      default:
+        throw new Error('Invalid role');
+    }
+
+    if (!result) {
+      throw new Error('User not found');
+    }
+
+    return result;
+  } catch (error) {
+    console.error('Error in getMe:', error);
+    throw new Error('Error fetching user data');
   }
-
-  if (role === "2") {
-    result = await Agent.findOne({ id: userId })
-      .populate("properties")
-      .populate("userId")
-      .populate("myAgency.agency");
-  }
-
-  if (role === "3") {
-    result = await Admin.findOne({ id: userId }).populate("userId");
-  }
-
-  if (role === "4") {
-    result = await SuperAdmin.findOne({ id: userId }).populate("userId");
-  }
-
-  if (role === "5") {
-    result = await Developer.findOne({ id: userId }).populate("userId");
-  }
-
-  return result;
 };
+
 
 export const UserServices = {
   createBuyerIntoDB,

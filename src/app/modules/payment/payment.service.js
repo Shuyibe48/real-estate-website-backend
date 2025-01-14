@@ -326,10 +326,25 @@ const processWebhookEvent = async (rawBody, signature) => {
   }
 };
 
+// const getPayments = async () => {
+//   const result = await Payment.find();
+//   return result;
+// };
 const getPayments = async () => {
-  const result = await Payment.find();
-  return result;
+  try {
+    const result = await Payment.find();
+
+    if (!result || result.length === 0) {
+      throw new AppError(httpStatus.NOT_FOUND, "No payments found.");
+    }
+
+    return result;
+  } catch (error) {
+    // ত্রুটি হ্যান্ডলিং
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error fetching payments.");
+  }
 };
+
 
 export const PaymentService = {
   createPayment,

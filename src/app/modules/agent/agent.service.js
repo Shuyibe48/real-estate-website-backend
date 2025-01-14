@@ -6,53 +6,142 @@ import httpStatus from "http-status";
 import { agentSearchableFields } from "./agent.constant.js";
 import QueryBuilder from "../../builder/QueryBuilder.js";
 
+// const getAgents = async (query) => {
+//   const agentQuery = new QueryBuilder(
+//     Agent.find()
+//       .populate("userId")
+//       .populate("myAgency.agency")
+//       .populate("properties"),
+//     query
+//   )
+//     .search(agentSearchableFields)
+//     .filter()
+//     .exactMatch(["address"])
+//     .sort()
+//     .paginate()
+//     .fields();
+
+//   const result = await agentQuery.modelQuery;
+
+//   return result;
+// };
 const getAgents = async (query) => {
-  const agentQuery = new QueryBuilder(
-    Agent.find()
-      .populate("userId")
-      .populate("myAgency.agency")
-      .populate("properties"),
-    query
-  )
-    .search(agentSearchableFields)
-    .filter()
-    .exactMatch(["address"])
-    .sort()
-    .paginate()
-    .fields();
+  try {
+    // Build the agent query using QueryBuilder
+    const agentQuery = new QueryBuilder(
+      Agent.find()
+        .populate("userId")
+        .populate("myAgency.agency")
+        .populate("properties"),
+      query
+    )
+      .search(agentSearchableFields)
+      .filter()
+      .exactMatch(["address"])
+      .sort()
+      .paginate()
+      .fields();
 
-  const result = await agentQuery.modelQuery;
+    // Execute the query
+    const result = await agentQuery.modelQuery;
 
-  return result;
-};
-
-const getSingleAgent = async (id) => {
-  const result = await Agent.findById(id)
-    .populate("reviews")
-    .populate("myAgency.agency")
-    .populate("properties");
-  return result;
-};
-
-const updateAgent = async (id, payload) => {
-  const { name, ...remainingAgentData } = payload;
-
-  const modifiedUpdatedData = { ...remainingAgentData };
-
-  if (name && Object.keys(name).length) {
-    for (const [key, value] of Object.entries(name)) {
-      modifiedUpdatedData[`name.${key}`] = value;
+    // Check if no results were found
+    if (!result || result.length === 0) {
+      console.log("No agents found with the given query.");
+      return []; // Or a custom message like 'No agents found.'
     }
-  }
 
-  const result = await Agent.findByIdAndUpdate(id, modifiedUpdatedData, {
-    new: true,
-    runValidators: true,
-  })
-    .populate("userId")
-    .populate("myAgency.agency");
-  return result;
+    return result;
+  } catch (error) {
+    console.error("Error fetching agents:", error);
+    throw new Error("Could not retrieve agent data.");
+  }
 };
+
+
+// const getSingleAgent = async (id) => {
+//   const result = await Agent.findById(id)
+//     .populate("reviews")
+//     .populate("myAgency.agency")
+//     .populate("properties");
+//   return result;
+// };
+const getSingleAgent = async (id) => {
+  try {
+    // Find the agent by ID and populate necessary fields
+    const result = await Agent.findById(id)
+      .populate("reviews")
+      .populate("myAgency.agency")
+      .populate("properties");
+
+    // Check if the agent was found
+    if (!result) {
+      console.log(`Agent with ID: ${id} not found.`);
+      throw new Error(`Agent with ID: ${id} not found.`);
+    }
+
+    return result;
+  } catch (error) {
+    console.error(`Error fetching agent with ID: ${id}:`, error);
+    throw new Error(`Could not retrieve agent with ID: ${id}.`);
+  }
+};
+
+
+// const updateAgent = async (id, payload) => {
+//   const { name, ...remainingAgentData } = payload;
+
+//   const modifiedUpdatedData = { ...remainingAgentData };
+
+//   if (name && Object.keys(name).length) {
+//     for (const [key, value] of Object.entries(name)) {
+//       modifiedUpdatedData[`name.${key}`] = value;
+//     }
+//   }
+
+//   const result = await Agent.findByIdAndUpdate(id, modifiedUpdatedData, {
+//     new: true,
+//     runValidators: true,
+//   })
+//     .populate("userId")
+//     .populate("myAgency.agency");
+//   return result;
+// };
+const updateAgent = async (id, payload) => {
+  try {
+    const { name, ...remainingAgentData } = payload;
+
+    const modifiedUpdatedData = { ...remainingAgentData };
+
+    // Update name fields if provided
+    if (name && Object.keys(name).length) {
+      for (const [key, value] of Object.entries(name)) {
+        modifiedUpdatedData[`name.${key}`] = value;
+      }
+    }
+
+    // Update agent details
+    const result = await Agent.findByIdAndUpdate(id, modifiedUpdatedData, {
+      new: true,
+      runValidators: true,
+    })
+      .populate("userId")
+      .populate("myAgency.agency");
+
+    // Check if agent exists
+    if (!result) {
+      console.log(`Agent with ID: ${id} not found.`);
+      throw new Error(`Agent with ID: ${id} not found.`);
+    }
+
+    console.log(`Agent with ID: ${id} successfully updated.`);
+    return result;
+  } catch (error) {
+    console.error(`Error updating agent with ID: ${id}:`, error);
+    throw new Error(`Could not update agent with ID: ${id}.`);
+  }
+};
+
 
 const deleteAgent = async (id) => {
   const session = await mongoose.startSession();

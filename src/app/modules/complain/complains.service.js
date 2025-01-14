@@ -7,27 +7,71 @@ import { complainSearchableFields } from "./complains.constant.js";
 import QueryBuilder from "../../builder/QueryBuilder.js";
 import { Complains } from "./complains.model.js";
 
+// const getComplains = async (query) => {
+//   const complainsQuery = new QueryBuilder(
+//     Complains.find().populate("userId"),
+//     query
+//   )
+//     .search(complainSearchableFields) // Partial match for searchable fields
+//     .filter()
+//     .exactMatch(["city", "type"]) // `type` এর জন্য exact match এবং `city` এর জন্য partial match
+//     .sort()
+//     .paginate()
+//     .fields();
+
+//   const result = await complainsQuery.modelQuery;
+
+//   return result;
+// };
 const getComplains = async (query) => {
-  const complainsQuery = new QueryBuilder(
-    Complains.find().populate("userId"),
-    query
-  )
-    .search(complainSearchableFields) // Partial match for searchable fields
-    .filter()
-    .exactMatch(["city", "type"]) // `type` এর জন্য exact match এবং `city` এর জন্য partial match
-    .sort()
-    .paginate()
-    .fields();
+  try {
+    const complainsQuery = new QueryBuilder(
+      Complains.find().populate("userId"),
+      query
+    )
+      .search(complainSearchableFields) // Partial match for searchable fields
+      .filter()
+      .exactMatch(["city", "type"]) // Exact match for `city` and `type`
+      .sort()
+      .paginate()
+      .fields();
 
-  const result = await complainsQuery.modelQuery;
+    // ফাংশনটি যদি কোন ফলাফল না দেয় তবে একটি ত্রুটি প্রদান
+    const result = await complainsQuery.modelQuery;
 
-  return result;
+    if (!result || result.length === 0) {
+      throw new AppError(httpStatus.NOT_FOUND, "No complaints found.");
+    }
+
+    return result;
+  } catch (error) {
+    // ত্রুটি হ্যান্ডলিং
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error fetching complaints.");
+  }
 };
 
+
+// const createComplains = async (id, complains) => {
+//   const result = await Complains.create(complains);
+//   return result;
+// };
 const createComplains = async (id, complains) => {
-  const result = await Complains.create(complains);
-  return result;
+  try {
+    // complains তৈরি করার আগে কিছু ভ্যালিডেশন বা প্রাসঙ্গিক চেক করা যেতে পারে।
+    if (!complains || !complains.message || !complains.type) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Complains data is incomplete.");
+    }
+
+    // Complains তৈরি করা
+    const result = await Complains.create({ ...complains, userId: id });
+
+    return result;
+  } catch (error) {
+    // ত্রুটি হ্যান্ডলিং
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error creating complaint.");
+  }
 };
+
 
 const deleteComplain = async (id) => {
   try {

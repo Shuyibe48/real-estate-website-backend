@@ -73,27 +73,69 @@ const createProject = async (id, project) => {
 //   return result;
 // };
 
+// const getProjects = async (query) => {
+//   const projectQuery = new QueryBuilder(
+//     Project.find().populate("developerId"),
+//     query
+//   )
+//     .search(projectSearchableFields) // Partial match for searchable fields
+//     .filter()
+//     .exactMatch(["city", "type"]) // `type` এর জন্য exact match এবং `city` এর জন্য partial match
+//     .sort()
+//     .paginate()
+//     .fields();
+
+//   const result = await projectQuery.modelQuery;
+
+//   return result;
+// };
 const getProjects = async (query) => {
-  const projectQuery = new QueryBuilder(
-    Project.find().populate("developerId"),
-    query
-  )
-    .search(projectSearchableFields) // Partial match for searchable fields
-    .filter()
-    .exactMatch(["city", "type"]) // `type` এর জন্য exact match এবং `city` এর জন্য partial match
-    .sort()
-    .paginate()
-    .fields();
+  try {
+    const projectQuery = new QueryBuilder(
+      Project.find().populate("developerId"),
+      query
+    )
+      .search(projectSearchableFields) // Partial match for searchable fields
+      .filter()
+      .exactMatch(["city", "type"]) // Exact match for `type` and partial match for `city`
+      .sort()
+      .paginate()
+      .fields();
 
-  const result = await projectQuery.modelQuery;
+    const result = await projectQuery.modelQuery;
 
-  return result;
+    if (!result || result.length === 0) {
+      throw new AppError(httpStatus.NOT_FOUND, "No projects found.");
+    }
+
+    return result;
+  } catch (error) {
+    // Error handling
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error fetching projects.");
+  }
 };
 
+
+// const getSingleProject = async (id) => {
+//   const result = await Project.findById(id).populate("developerId");
+//   return result;
+// };
 const getSingleProject = async (id) => {
-  const result = await Project.findById(id).populate("developerId");
-  return result;
+  try {
+    const result = await Project.findById(id).populate("developerId", "name email");
+
+    if (!result) {
+      throw new AppError(httpStatus.NOT_FOUND, "Project not found.");
+    }
+
+    return result;
+  } catch (error) {
+    // Handle any unexpected errors
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error fetching project.");
+  }
 };
+
+
 
 const getPromotedProject = async () => {
   try {
@@ -105,13 +147,31 @@ const getPromotedProject = async () => {
   }
 };
 
+// const updateProject = async (id, payload) => {
+//   const result = await Project.findByIdAndUpdate(id, payload, {
+//     new: true,
+//     runValidators: true,
+//   });
+//   return result;
+// };
 const updateProject = async (id, payload) => {
-  const result = await Project.findByIdAndUpdate(id, payload, {
-    new: true,
-    runValidators: true,
-  });
-  return result;
+  try {
+    const result = await Project.findByIdAndUpdate(id, payload, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!result) {
+      throw new AppError(httpStatus.NOT_FOUND, "Project not found.");
+    }
+
+    return result;
+  } catch (error) {
+    // Handle unexpected errors
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error updating project.");
+  }
 };
+
 
 const updateProjectPromotionStatus = async (id, isPromotedStatus) => {
   try {

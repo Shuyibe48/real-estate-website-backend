@@ -7,27 +7,75 @@ import { Property } from "../property/property.model.js";
 import { reviewSearchableFields } from "./reviews.constant.js";
 import QueryBuilder from "../../builder/QueryBuilder.js";
 
+// const getReviews = async (query) => {
+//   const reviewsQuery = new QueryBuilder(Reviews.find().populate("userId"), query)
+//     .search(reviewSearchableFields) // Partial match for searchable fields
+//     .filter()
+//     .exactMatch(["city", "type"]) // `type` এর জন্য exact match এবং `city` এর জন্য partial match
+//     .sort()
+//     .paginate()
+//     .fields();
+
+//   const result = await reviewsQuery.modelQuery;
+
+//   return result;
+// };
 const getReviews = async (query) => {
-  const reviewsQuery = new QueryBuilder(Reviews.find().populate("userId"), query)
-    .search(reviewSearchableFields) // Partial match for searchable fields
-    .filter()
-    .exactMatch(["city", "type"]) // `type` এর জন্য exact match এবং `city` এর জন্য partial match
-    .sort()
-    .paginate()
-    .fields();
+  try {
+    // ডাটাবেজ থেকে reviews খোঁজা
+    const reviewsQuery = new QueryBuilder(
+      Reviews.find().populate("userId"),
+      query
+    )
+      .search(reviewSearchableFields) // Partial match for searchable fields
+      .filter()
+      .exactMatch(["city", "type"]) // `type` এর জন্য exact match এবং `city` এর জন্য partial match
+      .sort()
+      .paginate()
+      .fields();
 
-  const result = await reviewsQuery.modelQuery;
+    const result = await reviewsQuery.modelQuery;
 
-  return result;
+    // যদি কোনো রিভিউ না থাকে
+    if (!result || result.length === 0) {
+      throw new AppError(httpStatus.NOT_FOUND, "No reviews found.");
+    }
+
+    return result;
+  } catch (error) {
+    // Unexpected errors handle করা
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error fetching reviews.");
+  }
 };
 
+
+// const updateReview = async (id, payload) => {
+//   const result = await Reviews.findByIdAndUpdate(id, payload, {
+//     new: true,
+//     runValidators: true,
+//   });
+//   return result;
+// };
 const updateReview = async (id, payload) => {
-  const result = await Reviews.findByIdAndUpdate(id, payload, {
-    new: true,
-    runValidators: true,
-  });
-  return result;
+  try {
+    // রিভিউ আপডেট করা
+    const result = await Reviews.findByIdAndUpdate(id, payload, {
+      new: true,
+      runValidators: true,
+    });
+
+    // যদি রিভিউ পাওয়া না যায়
+    if (!result) {
+      throw new AppError(httpStatus.NOT_FOUND, "Review not found.");
+    }
+
+    return result;
+  } catch (error) {
+    // কোনো ত্রুটি ঘটলে তা হ্যান্ডেল করা
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error updating review.");
+  }
 };
+
 
 const createReviewsAgent = async (id, reviews) => {
   const session = await mongoose.startSession();
