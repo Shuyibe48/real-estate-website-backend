@@ -66,8 +66,12 @@ const loginUser = async (payload) => {
     }
 
     // Check if the password matches
-    const isPasswordMatched = await User.isPasswordMatched(payload?.password, user?.password);
-    if (!isPasswordMatched) {
+    // const isPasswordMatched = await User.isPasswordMatched(payload?.password, user?.password);
+    // if (!isPasswordMatched) {
+    //   throw new AppError(httpStatus.FORBIDDEN, "Password does not match.");
+    // }
+    
+    if (payload?.password !== user?.password) {
       throw new AppError(httpStatus.FORBIDDEN, "Password does not match.");
     }
 
@@ -94,7 +98,6 @@ const loginUser = async (payload) => {
     throw error; // Rethrow to ensure error is handled at the caller
   }
 };
-
 
 // const changePassword = async (userData, payload) => {
 //   const user = await User.isUserExist(userData?.userId);
@@ -157,14 +160,20 @@ const changePassword = async (userData, payload) => {
     }
 
     // Check if old password matches
-    const isPasswordMatched = await User.isPasswordMatched(payload?.oldPassword, user?.password);
+    const isPasswordMatched = await User.isPasswordMatched(
+      payload?.oldPassword,
+      user?.password
+    );
     if (!isPasswordMatched) {
       throw new AppError(httpStatus.FORBIDDEN, "Old password does not match.");
     }
 
     // Validate the new password (optional)
     if (!payload?.newPassword || payload.newPassword.length < 8) {
-      throw new AppError(httpStatus.BAD_REQUEST, "New password must be at least 8 characters long.");
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "New password must be at least 8 characters long."
+      );
     }
 
     // Hash the new password
@@ -186,7 +195,6 @@ const changePassword = async (userData, payload) => {
     throw error; // Ensure error is handled at the caller
   }
 };
-
 
 // const refreshToken = async (token) => {
 //   if (!token) {
@@ -236,14 +244,20 @@ const changePassword = async (userData, payload) => {
 // };
 const refreshToken = async (token) => {
   if (!token) {
-    throw new AppError(httpStatus.UNAUTHORIZED, "Token is required for authorization.");
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "Token is required for authorization."
+    );
   }
 
   let decoded;
   try {
     decoded = verifyToken(token, config.jwt_refresh_secret);
   } catch (error) {
-    throw new AppError(httpStatus.UNAUTHORIZED, "Invalid or expired refresh token.");
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "Invalid or expired refresh token."
+    );
   }
 
   const { role, userId, iat } = decoded;
@@ -266,7 +280,10 @@ const refreshToken = async (token) => {
     user.passwordChangedAt &&
     User.isJWTIssuedBeforePasswordChanged(user.passwordChangedAt, iat)
   ) {
-    throw new AppError(httpStatus.UNAUTHORIZED, "Password has been changed. Please log in again.");
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "Password has been changed. Please log in again."
+    );
   }
 
   const jwtPayload = { userId: user?.id, role: user?.role };
@@ -279,7 +296,6 @@ const refreshToken = async (token) => {
 
   return { accessToken };
 };
-
 
 // const forgetPassword = async (userId) => {
 //   const user = await User.isUserExist(userId);
@@ -333,7 +349,6 @@ const forgetPassword = async (userId) => {
   // Send email to the user with the reset link
   sendEmail(user?.email, resetUILink);
 };
-
 
 // const resetPassword = async (payload, token) => {
 //   const { id, newPassword } = payload;
@@ -407,7 +422,10 @@ const resetPassword = async (payload, token) => {
 
   // Validate the new password
   if (newPassword.length < 8) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Password must be at least 8 characters.");
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Password must be at least 8 characters."
+    );
   }
 
   // const newHashPassword = await bcrypt.hash(newPassword, Number(config.bcrypt_salt_rounds));
@@ -429,7 +447,6 @@ const resetPassword = async (payload, token) => {
 
   return { message: "Password reset successful." };
 };
-
 
 export const AuthServices = {
   loginUser,
