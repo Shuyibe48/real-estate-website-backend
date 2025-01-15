@@ -61,7 +61,7 @@ app.use(morgan("combined"));
 
 // CORS Configuration
 const allowedOrigins =
-  process.env.NODE_ENV === "production"
+  process.env.NODE_ENV === "development"
     ? ["https://real-estate-frontend-lime-ten.vercel.app"]
     : ["http://localhost:5173"];
 
