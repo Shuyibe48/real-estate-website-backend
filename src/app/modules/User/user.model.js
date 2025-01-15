@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import bcrypt from "bcrypt";
+// import bcrypt from "bcrypt";
 import { UserStatus } from "./user.constant.js";
 
 const userSchema = new Schema(
@@ -35,10 +35,10 @@ const userSchema = new Schema(
 );
 
 // hash password
-userSchema.pre("save", async function (next) {
-  this.password = await bcrypt.hash(this.password, Number(12));
-  next();
-});
+// userSchema.pre("save", async function (next) {
+//   this.password = await bcrypt.hash(this.password, Number(12));
+//   next();
+// });
 
 // hiding password after hash
 userSchema.post("save", function (doc, next) {
@@ -76,12 +76,12 @@ userSchema.statics.isUserExist = async function (email) {
   return existingUser;
 };
 
-userSchema.statics.isPasswordMatched = async function (
-  plainTextPassword,
-  hashedPassword
-) {
-  return await bcrypt.compare(plainTextPassword, hashedPassword);
-};
+// userSchema.statics.isPasswordMatched = async function (
+//   plainTextPassword,
+//   hashedPassword
+// ) {
+//   return await bcrypt.compare(plainTextPassword, hashedPassword);
+// };
 
 userSchema.statics.isJWTIssuedBeforePasswordChanged = function (
   passwordChangedTimestamps,

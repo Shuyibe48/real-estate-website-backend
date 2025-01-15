@@ -2,7 +2,7 @@ import httpStatus from "http-status";
 import AppError from "../../errors/AppError.js";
 import { User } from "../User/user.model.js";
 import config from "../../config/index.js";
-import bcrypt from "bcrypt";
+// import bcrypt from "bcrypt";
 import { createToken, verifyToken } from "./auth.utils.js";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "../../utils/sendEmail.js";
@@ -168,12 +168,16 @@ const changePassword = async (userData, payload) => {
     }
 
     // Hash the new password
-    const newHashPassword = await bcrypt.hash(payload?.newPassword, Number(config.bcrypt_salt_rounds));
+    // const newHashPassword = await bcrypt.hash(payload?.newPassword, Number(config.bcrypt_salt_rounds));
 
     // Update the password in the database
+    // await User.findOneAndUpdate(
+    //   { id: userData.userId, role: userData.role },
+    //   { password: newHashPassword, passwordChangedAt: new Date() }
+    // );
     await User.findOneAndUpdate(
       { id: userData.userId, role: userData.role },
-      { password: newHashPassword, passwordChangedAt: new Date() }
+      { password: payload?.newPassword, passwordChangedAt: new Date() }
     );
 
     return { message: "Password successfully updated." };
@@ -406,12 +410,19 @@ const resetPassword = async (payload, token) => {
     throw new AppError(httpStatus.BAD_REQUEST, "Password must be at least 8 characters.");
   }
 
-  const newHashPassword = await bcrypt.hash(newPassword, Number(config.bcrypt_salt_rounds));
+  // const newHashPassword = await bcrypt.hash(newPassword, Number(config.bcrypt_salt_rounds));
 
+  // await User.findOneAndUpdate(
+  //   { id: decoded?.userId, role: decoded?.role },
+  //   {
+  //     password: newHashPassword,
+  //     passwordChangedAt: new Date(),
+  //   }
+  // );
   await User.findOneAndUpdate(
     { id: decoded?.userId, role: decoded?.role },
     {
-      password: newHashPassword,
+      password: newPassword,
       passwordChangedAt: new Date(),
     }
   );
