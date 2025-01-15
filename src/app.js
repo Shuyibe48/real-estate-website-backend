@@ -59,15 +59,12 @@ app.use(express.json());
 app.use(helmet());
 app.use(morgan("combined"));
 
-const corsOrigin = true;
-// CORS Configuration
-const allowedOrigins = corsOrigin
-  ? ["https://real-estate-frontend-tau.vercel.app"]
-  : ["http://localhost:5173"];
-
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: [
+      "https://real-estate-frontend-tau.vercel.app",
+      "http://localhost:5173",
+    ],
     credentials: true,
   })
 );
