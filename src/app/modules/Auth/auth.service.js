@@ -70,7 +70,7 @@ const loginUser = async (payload) => {
     // if (!isPasswordMatched) {
     //   throw new AppError(httpStatus.FORBIDDEN, "Password does not match.");
     // }
-    
+
     if (payload?.password !== user?.password) {
       throw new AppError(httpStatus.FORBIDDEN, "Password does not match.");
     }
@@ -159,12 +159,12 @@ const changePassword = async (userData, payload) => {
       throw new AppError(httpStatus.FORBIDDEN, "This user is blocked!");
     }
 
-    // Check if old password matches
-    const isPasswordMatched = await User.isPasswordMatched(
-      payload?.oldPassword,
-      user?.password
-    );
-    if (!isPasswordMatched) {
+    // // Check if old password matches
+    // const isPasswordMatched = await User.isPasswordMatched(
+    //   payload?.oldPassword,
+    //   user?.password
+    // );
+    if (payload?.oldPassword !== user?.password) {
       throw new AppError(httpStatus.FORBIDDEN, "Old password does not match.");
     }
 
