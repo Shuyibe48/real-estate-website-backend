@@ -59,11 +59,11 @@ app.use(express.json());
 app.use(helmet());
 app.use(morgan("combined"));
 
+const corsOrigin = true;
 // CORS Configuration
-const allowedOrigins =
-  process.env.NODE_ENV === "development"
-    ? ["https://real-estate-frontend-lime-ten.vercel.app"]
-    : ["http://localhost:5173"];
+const allowedOrigins = corsOrigin
+  ? ["https://real-estate-frontend-lime-ten.vercel.app"]
+  : ["http://localhost:5173"];
 
 app.use(
   cors({
