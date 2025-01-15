@@ -62,7 +62,7 @@ app.use(morgan("combined"));
 const corsOrigin = true;
 // CORS Configuration
 const allowedOrigins = corsOrigin
-  ? ["https://real-estate-frontend-lime-ten.vercel.app"]
+  ? ["https://real-estate-frontend-tau.vercel.app"]
   : ["http://localhost:5173"];
 
 app.use(
