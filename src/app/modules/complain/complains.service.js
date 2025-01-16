@@ -58,12 +58,12 @@ const getComplains = async (query) => {
 const createComplains = async (id, complains) => {
   try {
     // complains তৈরি করার আগে কিছু ভ্যালিডেশন বা প্রাসঙ্গিক চেক করা যেতে পারে।
-    if (!complains || !complains.message || !complains.type) {
+    if (!complains) {
       throw new AppError(httpStatus.BAD_REQUEST, "Complains data is incomplete.");
     }
 
     // Complains তৈরি করা
-    const result = await Complains.create({ ...complains, userId: id });
+    const result = await Complains.create(complains);
 
     return result;
   } catch (error) {

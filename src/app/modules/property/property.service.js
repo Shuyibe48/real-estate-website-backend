@@ -103,8 +103,9 @@ const createProperty = async (id, agentId, property) => {
 const getProperties = async (query) => {
   try {
     const propertyQuery = new QueryBuilder(
-      Property.find().populate("agencyId", "name address") // শুধু প্রয়োজনীয় ফিল্ডগুলো populate
-        .populate("uploaderAgentId", "name email"), // শুধু প্রয়োজনীয় ফিল্ড
+      Property.find()
+        .populate("agencyId") // শুধু প্রয়োজনীয় ফিল্ডগুলো populate
+        .populate("uploaderAgentId"), // শুধু প্রয়োজনীয় ফিল্ড
       query
     )
       .search(propertySearchableFields) // Partial match for searchable fields
@@ -123,10 +124,12 @@ const getProperties = async (query) => {
     return result;
   } catch (error) {
     // Handle any unexpected errors
-    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error retrieving properties.");
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "Error retrieving properties."
+    );
   }
 };
-
 
 // const getSingleProperty = async (id) => {
 //   const result = await Property.findById(id)
@@ -138,9 +141,9 @@ const getProperties = async (query) => {
 const getSingleProperty = async (id) => {
   try {
     const result = await Property.findById(id)
-      .populate("reviews", "rating comment user") // শুধু প্রয়োজনীয় ফিল্ড populate
-      .populate("agencyId", "name address") // শুধু প্রয়োজনীয় ফিল্ড populate
-      .populate("uploaderAgentId", "name email");
+      .populate("reviews") // শুধু প্রয়োজনীয় ফিল্ড populate
+      .populate("agencyId") // শুধু প্রয়োজনীয় ফিল্ড populate
+      .populate("uploaderAgentId");
 
     if (!result) {
       throw new AppError(httpStatus.NOT_FOUND, "Property not found.");
@@ -149,10 +152,12 @@ const getSingleProperty = async (id) => {
     return result;
   } catch (error) {
     // Handle any unexpected errors
-    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error retrieving property.");
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "Error retrieving property."
+    );
   }
 };
-
 
 const getPromotedProperty = async () => {
   try {
@@ -189,10 +194,12 @@ const updateProperty = async (id, payload) => {
     return updatedProperty;
   } catch (error) {
     // Unexpected errors handle করা
-    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error updating property.");
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "Error updating property."
+    );
   }
 };
-
 
 const updatePropertyPromotionStatus = async (id, isPromotedStatus) => {
   try {

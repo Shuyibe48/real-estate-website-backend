@@ -36,10 +36,12 @@ const findLastBuyerId = async () => {
     return lastBuyer.id.substring(2);
   } catch (error) {
     // কোনো ত্রুটি ঘটলে তা হ্যান্ডেল করা
-    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Error fetching last buyer id.");
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "Error fetching last buyer id."
+    );
   }
 };
-
 
 // export const generateBuyerId = async () => {
 //   let currentId = (0).toString();
@@ -73,25 +75,7 @@ export const generateBuyerId = async () => {
   return incrementId;
 };
 
-
 // Agent ID
-// export const findLastAgentId = async () => {
-//   const lastAgent = await User.findOne(
-//     {
-//       role: USER_ROLE.agent,
-//     },
-//     {
-//       id: 1,
-//       _id: 0,
-//     }
-//   )
-//     .sort({
-//       createdAt: -1,
-//     })
-//     .lean();
-
-//   return lastAgent?.id ? lastAgent.id.substring(2) : undefined;
-// };
 export const findLastAgentId = async () => {
   const lastAgent = await User.findOne(
     {
@@ -102,42 +86,28 @@ export const findLastAgentId = async () => {
       _id: 0,
     }
   )
-    .sort({ createdAt: -1 })
+    .sort({
+      createdAt: -1,
+    })
     .lean();
 
-  // যদি lastAgent বিদ্যমান থাকে এবং id পাওয়া যায় তবে তার substring(2) ব্যবহার করা
-  return lastAgent?.id?.substring(2);
+  return lastAgent?.id ? lastAgent.id.substring(2) : undefined;
 };
 
-
-// export const generateAgentId = async () => {
-//   let currentId = (0).toString();
-//   const lastAgentId = await findLastAgentId();
-
-//   if (lastAgentId) {
-//     currentId = lastAgentId.substring(3);
-//   }
-
-//   let incrementId = (Number(currentId) + 1).toString().padStart(4, "0");
-
-//   incrementId = `AG-${incrementId}`;
-
-//   return incrementId;
-// };
 export const generateAgentId = async () => {
-  let currentId = '0000'; // Default currentId set to '0000' for safe start
+  let currentId = (0).toString();
   const lastAgentId = await findLastAgentId();
 
   if (lastAgentId) {
-    currentId = lastAgentId; // No need to substring as findLastAgentId gives the correct part already
+    currentId = lastAgentId.substring(3);
   }
 
-  // Increment and ensure 4-digit format
-  let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
+  let incrementId = (Number(currentId) + 1).toString().padStart(4, "0");
 
-  return `AG-${incrementId}`;
+  incrementId = `AG-${incrementId}`;
+
+  return incrementId;
 };
-
 
 // Admin ID
 // export const findLastAdminId = async () => {
@@ -174,7 +144,6 @@ export const findLastAdminId = async () => {
   return lastAdmin?.id ? lastAdmin.id.slice(3) : undefined;
 };
 
-
 // export const generateAdminId = async () => {
 //   let currentId = (0).toString();
 //   const lastAdminId = await findLastAdminId();
@@ -193,7 +162,7 @@ export const generateAdminId = async () => {
   const lastAdminId = await findLastAdminId();
 
   if (lastAdminId) {
-    currentId = lastAdminId.slice(3);  // Use slice instead of substring
+    currentId = lastAdminId.slice(3); // Use slice instead of substring
   }
 
   let incrementId = (Number(currentId) + 1).toString().padStart(4, "0");
@@ -201,7 +170,6 @@ export const generateAdminId = async () => {
   incrementId = `AD-${incrementId}`;
   return incrementId;
 };
-
 
 // Developer ID
 // export const findLastDeveloperId = async () => {
@@ -239,7 +207,6 @@ export const findLastDeveloperId = async () => {
   return lastDeveloper?.id ? lastDeveloper.id.slice(2) : undefined; // Use slice instead of substring
 };
 
-
 // export const generateDeveloperId = async () => {
 //   let currentId = (0).toString();
 //   const lastDeveloperId = await findLastDeveloperId();
@@ -267,7 +234,6 @@ export const generateDeveloperId = async () => {
   return incrementId;
 };
 
-
 // property id
 // const findLastPropertyId = async () => {
 //   const lastProperty = await Property.findOne().sort({ createdAt: -1 }).lean();
@@ -277,9 +243,8 @@ export const generateDeveloperId = async () => {
 const findLastPropertyId = async () => {
   const lastProperty = await Property.findOne().sort({ createdAt: -1 }).lean();
 
-  return lastProperty?.id ? lastProperty.id.slice(2) : undefined;  // Use slice instead of substring
+  return lastProperty?.id ? lastProperty.id.slice(2) : undefined; // Use slice instead of substring
 };
-
 
 // export const generatePropertyId = async () => {
 //   let currentId = (0).toString();
@@ -299,7 +264,7 @@ export const generatePropertyId = async () => {
   const lastPropertyId = await findLastPropertyId();
 
   if (lastPropertyId) {
-    currentId = lastPropertyId.slice(3);  // Use slice instead of substring
+    currentId = lastPropertyId.slice(3); // Use slice instead of substring
   }
 
   let incrementId = (Number(currentId) + 1).toString().padStart(4, "0");
@@ -307,7 +272,6 @@ export const generatePropertyId = async () => {
   incrementId = `PR-${incrementId}`;
   return incrementId;
 };
-
 
 // property id
 // const findLastProjectId = async () => {
@@ -320,7 +284,6 @@ const findLastProjectId = async () => {
 
   return lastProject?.id ? lastProject.id.slice(2) : undefined;
 };
-
 
 // export const generateProjectId = async () => {
 //   let currentId = (0).toString();
@@ -340,7 +303,7 @@ export const generateProjectId = async () => {
   const lastProjectId = await findLastProjectId();
 
   if (lastProjectId) {
-    currentId = lastProjectId.slice(3);  // পরিবর্তন করা হয়েছে
+    currentId = lastProjectId.slice(3); // পরিবর্তন করা হয়েছে
   }
 
   let incrementId = (Number(currentId) + 1).toString().padStart(4, "0");
@@ -348,8 +311,6 @@ export const generateProjectId = async () => {
   incrementId = `PJ-${incrementId}`;
   return incrementId;
 };
-
-
 
 // agency id
 // const findLastAgencyId = async () => {
@@ -360,9 +321,8 @@ export const generateProjectId = async () => {
 const findLastAgencyId = async () => {
   const lastAgency = await Agency.findOne().sort({ createdAt: -1 }).lean();
 
-  return lastAgency?.id ? lastAgency.id.slice(2) : undefined;  // পরিবর্তন করা হয়েছে
+  return lastAgency?.id ? lastAgency.id.slice(2) : undefined; // পরিবর্তন করা হয়েছে
 };
-
 
 // export const generateAgencyId = async () => {
 //   let currentId = (0).toString();
@@ -382,7 +342,7 @@ export const generateAgencyId = async () => {
   const lastAgencyId = await findLastAgencyId();
 
   if (lastAgencyId) {
-    currentId = lastAgencyId.slice(3);  // পরিবর্তন করা হয়েছে
+    currentId = lastAgencyId.slice(3); // পরিবর্তন করা হয়েছে
   }
 
   let incrementId = (Number(currentId) + 1).toString().padStart(4, "0");
@@ -390,4 +350,3 @@ export const generateAgencyId = async () => {
   incrementId = `AC-${incrementId}`;
   return incrementId;
 };
-
