@@ -15,6 +15,7 @@ app.use(
     origin: [
       "https://real-estate-frontend-tau.vercel.app",
       "http://localhost:5173",
+      "https://www.immogroup.ro",
     ],
     credentials: true,
   })
