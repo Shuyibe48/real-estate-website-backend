@@ -240,6 +240,7 @@ const deleteFavoriteProperty = async (id, propertyId) => {
 
 //   return searchHistory;
 // };
+
 const saveSearchHistory = async (id, searchText) => {
   try {
     // Buyer ডকুমেন্টের সাথে খুঁজে পাওয়া যাচ্ছে কিনা তা নিশ্চিত করা

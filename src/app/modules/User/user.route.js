@@ -20,6 +20,7 @@ userRouter.post("/create-admin", UserControllers.createAdmin);
 userRouter.post("/create-developer", UserControllers.createDeveloper);
 userRouter.post("/change-status/:id", auth("4"), UserControllers.changeStatus);
 userRouter.get("/get-user/:id", UserControllers.getUsers);
+userRouter.post("/save-search-history/:id", UserControllers.saveSearchHistory);
 userRouter.get("/me", auth(USER_ROLE.buyer, USER_ROLE.agent,USER_ROLE.admin, USER_ROLE.superAdmin, USER_ROLE.developer), UserControllers.getMe);
 
 export const UserRoutes = userRouter;

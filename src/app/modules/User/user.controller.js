@@ -90,12 +90,28 @@ const getMe = catchAsync(async (req, res) => {
   });
 });
 
+const saveSearchHistory = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const searchText = req.body;
+
+  const result = await UserServices.saveSearchHistory(id, searchText);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Search text has been saved successfully",
+    data: result,
+  });
+});
+
+
 export const UserControllers = {
   createBuyer,
   createAgent,
   createAdmin,
   createDeveloper,
   changeStatus,
+  saveSearchHistory,
   getUsers,
   getMe,
 };

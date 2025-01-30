@@ -199,39 +199,36 @@ const createDeveloperIntoDB = async (developer) => {
 // Improved changeStatus function with error handling and validation
 const changeStatus = async (id, payload) => {
   try {
-    if (!id || typeof id !== 'string') {
-      throw new Error('Invalid ID');
+    if (!id || typeof id !== "string") {
+      throw new Error("Invalid ID");
     }
     const result = await User.findByIdAndUpdate(id, payload, { new: true });
     if (!result) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
     return result;
   } catch (error) {
-    console.error('Error in changeStatus:', error);
-    throw new Error('Error updating status');
+    console.error("Error in changeStatus:", error);
+    throw new Error("Error updating status");
   }
 };
 
 // Improved getUsers function with error handling and performance optimization
 const getUsers = async (id) => {
   try {
-    if (!id || typeof id !== 'string') {
-      throw new Error('Invalid ID');
+    if (!id || typeof id !== "string") {
+      throw new Error("Invalid ID");
     }
-    const result = await User.find({ _id: id })
-      .select('name email appointments') // select only the necessary fields
-      .populate("appointments");
+    const result = await User.find({ _id: id }).populate("appointments");
     if (!result.length) {
-      throw new Error('No users found');
+      throw new Error("No users found");
     }
     return result;
   } catch (error) {
-    console.error('Error in getUsers:', error);
-    throw new Error('Error fetching users');
+    console.error("Error in getUsers:", error);
+    throw new Error("Error fetching users");
   }
 };
-
 
 // const getMe = async (userId, role) => {
 //   let result = null;
@@ -266,7 +263,7 @@ const getUsers = async (id) => {
 const getMe = async (userId, role) => {
   try {
     if (!userId || !role) {
-      throw new Error('Invalid userId or role');
+      throw new Error("Invalid userId or role");
     }
 
     let result = null;
@@ -286,35 +283,60 @@ const getMe = async (userId, role) => {
         break;
 
       case "3":
-        result = await Admin.findOne({ id: userId })
-          .populate("userId");
+        result = await Admin.findOne({ id: userId }).populate("userId");
         break;
 
       case "4":
-        result = await SuperAdmin.findOne({ id: userId })
-          .populate("userId");
+        result = await SuperAdmin.findOne({ id: userId }).populate("userId");
         break;
 
       case "5":
-        result = await Developer.findOne({ id: userId })
-          .populate("userId");
+        result = await Developer.findOne({ id: userId }).populate("userId");
         break;
 
       default:
-        throw new Error('Invalid role');
+        throw new Error("Invalid role");
     }
 
     if (!result) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
 
     return result;
   } catch (error) {
-    console.error('Error in getMe:', error);
-    throw new Error('Error fetching user data');
+    console.error("Error in getMe:", error);
+    throw new Error("Error fetching user data");
   }
 };
 
+const saveSearchHistory = async (id, searchText) => {
+  try {
+    // user ডকুমেন্টের সাথে খুঁজে পাওয়া যাচ্ছে কিনা তা নিশ্চিত করা
+    const searchHistory = await User.findByIdAndUpdate(
+      id,
+      {
+        $addToSet: { searchHistory: searchText }, // ডুপ্লিকেট না হওয়ার জন্য $addToSet
+      },
+      { upsert: true, new: true } // নতুন ডকুমেন্ট না থাকলে তৈরি হবে এবং নতুন তথ্য ফেরত দিবে
+    );
+
+    // যদি searchHistory পাওয়া না যায়, তবে ত্রুটি প্রদান করা হবে
+    if (!searchHistory) {
+      throw new AppError(
+        httpStatus.NOT_FOUND,
+        "User not found or failed to update search history."
+      );
+    }
+
+    return searchHistory;
+  } catch (error) {
+    // ত্রুটি হ্যান্ডলিং
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "Error saving search history."
+    );
+  }
+};
 
 export const UserServices = {
   createBuyerIntoDB,
@@ -322,6 +344,7 @@ export const UserServices = {
   createAdminIntoDB,
   createDeveloperIntoDB,
   changeStatus,
+  saveSearchHistory,
   getUsers,
   getMe,
 };

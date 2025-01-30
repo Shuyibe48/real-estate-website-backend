@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 // import bcrypt from "bcrypt";
 import { UserStatus } from "./user.constant.js";
+import { type } from "os";
 
 const userSchema = new Schema(
   {
@@ -28,6 +29,16 @@ const userSchema = new Schema(
     },
     isDeleted: { type: Boolean, default: false },
     blocked: { type: Boolean, default: false },
+    searchHistory: [
+      {
+        type: {
+          type: String,
+        },
+        searchText: {
+          type: String,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
