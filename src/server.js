@@ -123,6 +123,5 @@ async function bootstrap() {
   }
 }
 
-bootstrap()
-
-export default bootstrap;
+// bootstrap ফাংশন কল করা হচ্ছে
+bootstrap();
