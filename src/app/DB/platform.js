@@ -31,7 +31,7 @@ const seedPlatform = async () => {
       await Platforms.create(platform);
       console.log("");
     } else {
-      console.log("Platform already exists.");
+      console.log("");
     }
   } catch (error) {
     console.error("Error seeding platform:", error);
