@@ -147,7 +147,7 @@ const stripe = Stripe(config.stripe_secret_key);
 //         } catch (error) {
 //           console.error("Error retrieving payment intent:", error);
 //         }
-//       }, 5000);
+//       }, 3000);
 //     }
 //   } catch (err) {
 //     throw new AppError(400, `Webhook Error: ${err.message}`);
@@ -316,7 +316,7 @@ const processWebhookEvent = async (rawBody, signature) => {
         } finally {
           session.endSession();
         }
-      }, 5000);
+      }, 3000);
     }
   } catch (err) {
     // Abort transaction on webhook error

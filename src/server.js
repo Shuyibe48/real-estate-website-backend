@@ -3,7 +3,7 @@
 // import seedSuperAdmin from "./app/DB/index.js";
 // import seedPlatform from "./app/DB/platform.js";
 
-// const PORT = 5000;
+// const PORT = 3000;
 
 // let server;
 
@@ -48,7 +48,7 @@
 // import seedSuperAdmin from "./app/DB/index.js";
 // import seedPlatform from "./app/DB/platform.js";
 
-// const PORT = 5000;
+// const PORT = 3000;
 
 // let server;
 
@@ -89,7 +89,7 @@ import app from "./app.js";
 import seedSuperAdmin from "./app/DB/index.js";
 import seedPlatform from "./app/DB/platform.js";
 
-const PORT = 5000;
+const PORT = 3000;
 
 let server;
 
@@ -136,7 +136,7 @@ export default async (req, res) => {
 // import seedSuperAdmin from "./app/DB/index.js";
 // import seedPlatform from "./app/DB/platform.js";
 
-// const PORT = process.env.PORT || 5000; // ভার্সেল এবং লোকাল উভয় ক্ষেত্রে PORT সেট করা
+// const PORT = process.env.PORT || 3000; // ভার্সেল এবং লোকাল উভয় ক্ষেত্রে PORT সেট করা
 
 // let server;
 
