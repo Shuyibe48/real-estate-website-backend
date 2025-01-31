@@ -82,4 +82,4 @@ async function bootstrap() {
   }
 }
 
-export default bootstrap();
+bootstrap();
