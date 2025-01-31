@@ -129,6 +129,8 @@ export default async (req, res) => {
   app(req, res);
 };
 
+// Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae, nam?
+
 // import mongoose from "mongoose";
 // import app from "./app.js";
 // import seedSuperAdmin from "./app/DB/index.js";
