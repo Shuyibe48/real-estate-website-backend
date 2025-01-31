@@ -29,7 +29,7 @@ const seedPlatform = async () => {
     const existingPlatform = await Platforms.findOne({ platform: "platform" });
     if (!existingPlatform) {
       await Platforms.create(platform);
-      console.log("Platform seeded successfully.");
+      console.log("");
     } else {
       console.log("Platform already exists.");
     }
