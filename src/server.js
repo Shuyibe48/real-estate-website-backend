@@ -174,10 +174,12 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 // ভার্সেলের জন্য এক্সপোর্ট
+let isServerStarted = false; // সার্ভার শুরু হয়েছে কিনা তা ট্র্যাক করার জন্য
+
 export default async (req, res) => {
-  // সার্ভার শুরু করার জন্য bootstrap কল করা হচ্ছে
-  if (!server) {
+  if (!isServerStarted) {
     await bootstrap();
+    isServerStarted = true; // সার্ভার শুরু হয়েছে বলে চিহ্নিত করা হচ্ছে
   }
 
   // Express অ্যাপকে রিকুয়েস্ট এবং রেসপন্স হ্যান্ডেল করতে দেওয়া হচ্ছে
