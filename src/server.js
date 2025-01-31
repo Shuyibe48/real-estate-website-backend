@@ -123,5 +123,8 @@ async function bootstrap() {
   }
 }
 
-// bootstrap ফাংশন কল করা হচ্ছে
-bootstrap();
+// ভার্সেলের জন্য সার্ভার এক্সপোর্ট
+export default async (req, res) => {
+  await bootstrap();
+  app(req, res);
+};
