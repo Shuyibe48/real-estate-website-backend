@@ -1,26 +1,3 @@
-import mongoose from "mongoose";
-import app from "./app.js";
-import seedSuperAdmin from "./app/DB/index.js";
-import seedPlatform from "./app/DB/platform.js";
-
-async function bootstrap() {
-  try {
-    await mongoose.connect("mongodb+srv://test-database:admin123@atlascluster.gc9l4fl.mongodb.net/test-project?retryWrites=true&w=majority&appName=AtlasCluster");
-    console.log("✅ Database connected successfully");
-
-    await seedSuperAdmin();
-    await seedPlatform();
-  } catch (error) {
-    console.error("❌ Error during bootstrap process:", error);
-    process.exit(1);
-  }
-}
-
-bootstrap();
-
-export default app; // ⬅️ Vercel এর জন্য বাধ্যতামূলক
-
-
 // import mongoose from "mongoose";
 // import app from "./app.js";
 // import seedSuperAdmin from "./app/DB/index.js";
@@ -34,7 +11,11 @@ export default app; // ⬅️ Vercel এর জন্য বাধ্যতা�
 //   try {
 //     // MongoDB কানেকশন চেষ্টা করা হচ্ছে
 //     await mongoose.connect(
-//       "mongodb+srv://test-database:admin123@atlascluster.gc9l4fl.mongodb.net/test-project?retryWrites=true&w=majority&appName=AtlasCluster"
+//       "mongodb+srv://test-database:admin123@atlascluster.gc9l4fl.mongodb.net/test-project?retryWrites=true&w=majority&appName=AtlasCluster",
+//       {
+//         useNewUrlParser: true,
+//         useUnifiedTopology: true,
+//       }
 //     );
 //     console.log("Database connected successfully");
 
@@ -61,3 +42,44 @@ export default app; // ⬅️ Vercel এর জন্য বাধ্যতা�
 // }
 
 // bootstrap();
+
+import mongoose from "mongoose";
+import app from "./app.js";
+import seedSuperAdmin from "./app/DB/index.js";
+import seedPlatform from "./app/DB/platform.js";
+
+const PORT = 5000;
+
+let server;
+
+async function bootstrap() {
+  try {
+    // MongoDB কানেকশন চেষ্টা করা হচ্ছে
+    await mongoose.connect(
+      "mongodb+srv://test-database:admin123@atlascluster.gc9l4fl.mongodb.net/test-project?retryWrites=true&w=majority&appName=AtlasCluster"
+    );
+    console.log("Database connected successfully");
+
+    // সিডিং অপারেশন
+    await seedSuperAdmin();
+    await seedPlatform();
+
+    // সার্ভার শুরু করা হচ্ছে
+    server = app.listen(PORT, () => {
+      console.log(`Example app listening on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Error during bootstrap process:", error);
+
+    // ত্রুটি ঘটলে সার্ভার বন্ধ করা হচ্ছে
+    if (server) {
+      server.close(() => {
+        console.log("Server closed due to bootstrap failure");
+      });
+    }
+
+    process.exit(1); // প্রক্রিয়া বন্ধ করা হচ্ছে ত্রুটির কারণে
+  }
+}
+
+bootstrap();

@@ -311,16 +311,16 @@ const getMe = async (userId, role) => {
 
 const saveSearchHistory = async (id, searchText) => {
   try {
- 
+    // user ডকুমেন্টের সাথে খুঁজে পাওয়া যাচ্ছে কিনা তা নিশ্চিত করা
     const searchHistory = await User.findByIdAndUpdate(
       id,
       {
-        $addToSet: { searchHistory: searchText }, 
+        $addToSet: { searchHistory: searchText }, // ডুপ্লিকেট না হওয়ার জন্য $addToSet
       },
-      { upsert: true, new: true } 
+      { upsert: true, new: true } // নতুন ডকুমেন্ট না থাকলে তৈরি হবে এবং নতুন তথ্য ফেরত দিবে
     );
 
-  
+    // যদি searchHistory পাওয়া না যায়, তবে ত্রুটি প্রদান করা হবে
     if (!searchHistory) {
       throw new AppError(
         httpStatus.NOT_FOUND,
@@ -330,7 +330,7 @@ const saveSearchHistory = async (id, searchText) => {
 
     return searchHistory;
   } catch (error) {
- 
+    // ত্রুটি হ্যান্ডলিং
     throw new AppError(
       httpStatus.INTERNAL_SERVER_ERROR,
       "Error saving search history."
